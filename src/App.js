@@ -58,7 +58,13 @@ function App() {
           setUsuarioActivo={setUsuarioActivo} 
           setPuntos={setPuntos} 
         />
-
+{pestanaActiva === 'perfil' && (
+  <SeccionPerfil 
+    puntos={puntos} 
+    setPuntos={setPuntos} 
+    usuarioActivo={usuarioActivo} 
+  />
+)}
         {pestanaActiva === 'inicio' && <InicioHero setPestanaActiva={setPestanaActiva} />}
         {pestanaActiva === 'turnos' && <SeccionTurnos setPuntos={setPuntos} usuarioActivo={usuarioActivo} />}
         {pestanaActiva === 'tienda' && (
