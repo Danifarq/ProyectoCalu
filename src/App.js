@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import './App.css';
-import BarraNavegacion from './componentes/BarraNavegacion';
-import InicioHero from './componentes/InicioHero';
-import SeccionTurnos from './componentes/SeccionTurnos';
-import SeccionTienda from './componentes/SeccionTienda';
-import SeccionPerfil from './componentes/SeccionPerfil';
+import BarraNavegacion from './components/BarraNavegacion';
+import inicioHero from './components/inicioHero';
+import SeccionTurnos from './components/SeccionTurnos';
+import SeccionTienda from './components/SeccionTienda';
+import SeccionPerfil from './components/SeccionPerfil';
 
 function App() {
   const [pestanaActiva, setPestanaActiva] = useState('inicio');
@@ -21,7 +21,7 @@ function App() {
       />
       
       <div style={{ padding: '20px' }}>
-        {pestanaActiva === 'inicio' && <InicioHero setPestanaActiva={setPestanaActiva} />}
+        {pestanaActiva === 'inicio' && <inicioHero setPestanaActiva={setPestanaActiva} />}
         {pestanaActiva === 'turnos' && <SeccionTurnos setPuntos={setPuntos} />}
         {pestanaActiva === 'tienda' && <SeccionTienda setContadorCarrito={setContadorCarrito} />}
         {pestanaActiva === 'perfil' && <SeccionPerfil puntos={puntos} />}
