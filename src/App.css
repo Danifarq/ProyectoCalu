@@ -1,5 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap');
+/* Estado Normal (Patita normal) */
+*, body, button, input, select, a {
+  cursor: url('../public/cursores/patita_normalclick.png') 0 0, auto !important;
+}
 
+/* Estado al hacer Clic (Patita apretada) */
+*:active, button:active, a:active, input:active {
+  cursor: url('../public/cursores/patita_click.png') 0 0, auto !important;
+}
 * {
   box-sizing: border-box;
   margin: 0;
