@@ -62,12 +62,13 @@ function App() {
         {pestanaActiva === 'inicio' && <InicioHero setPestanaActiva={setPestanaActiva} />}
         {pestanaActiva === 'turnos' && <SeccionTurnos setPuntos={setPuntos} usuarioActivo={usuarioActivo} />}
         {pestanaActiva === 'tienda' && (
-          <SeccionTienda 
-            setContadorCarrito={setContadorCarrito} 
-            mostrarModalCarrito={mostrarModalCarrito}
-            setMostrarModalCarrito={setMostrarModalCarrito}
-          />
-        )}
+  <SeccionTienda 
+    setContadorCarrito={setContadorCarrito} 
+    mostrarModalCarrito={mostrarModalCarrito}
+    setMostrarModalCarrito={setMostrarModalCarrito}
+    usuarioActivo={usuarioActivo}
+  />
+)}
        {pestanaActiva === 'perfil' && (
   <SeccionPerfil 
     puntos={puntos} 

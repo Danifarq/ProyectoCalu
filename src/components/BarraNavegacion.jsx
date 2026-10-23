@@ -4,20 +4,22 @@ export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, punto
   return (
     <nav style={{ 
       display: 'flex', 
-      justify: 'space-between', 
+      justifyContent: 'space-between', 
       alignItems: 'center', 
       padding: '15px 30px', 
       background: '#fff', 
-      borderBottom: '4px solid #121019' 
+      borderBottom: '4px solid #121019',
+      flexWrap: 'wrap',
+      gap: '10px'
     }}>
       <h1 
-        style={{ fontWeight: '900', cursor: 'pointer', color: '#be185d' }} 
+        style={{ fontWeight: '900', cursor: 'pointer', color: '#be185d', margin: 0 }} 
         onClick={() => setPestanaActiva('inicio')}
       >
         🐾 GATITOS NAILS
       </h1>
 
-      <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
         <button 
           className="retro-button" 
           style={{ background: pestanaActiva === 'inicio' ? '#facc15' : '#fff' }} 
@@ -45,6 +47,15 @@ export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, punto
           onClick={() => setPestanaActiva('perfil')}
         >
           💎 {puntos.toLocaleString()} Pts
+        </button>
+
+        {/* Botón de Panel de Administración */}
+        <button 
+          className="retro-button" 
+          style={{ background: pestanaActiva === 'admin' ? '#facc15' : '#c084fc' }} 
+          onClick={() => setPestanaActiva('admin')}
+        >
+          👑 Admin
         </button>
 
         {/* Ícono interactivo del carrito arriba a la derecha */}

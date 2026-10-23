@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { db } from '../firebase/configuracionFirebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
-export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito, setMostrarModalCarrito }) {
+export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito, setMostrarModalCarrito, usuarioActivo }) {
   const productos = [
     { id: 1, nombre: 'Kits Uñas Neón', precio: 12000, puntos: 200, color: '#f472b6' },
     { id: 2, nombre: 'Esmaltes Cat Eye', precio: 8500, puntos: 150, color: '#38bdf8' },
@@ -9,6 +11,7 @@ export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito,
   ];
 
   const [carrito, setCarrito] = useState([]);
+  const [cargandoCompra, setCargandoCompra] = useState(false);
 
   // Agregar producto al carrito
   const agregarAlCarrito = (producto) => {
@@ -39,11 +42,30 @@ export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito,
   // Calcular total en pesos
   const totalPesos = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
 
-  const finalizarCompra = () => {
-    alert('¡Compra realizada con éxito! 🐾✨ Te contactaremos para el envío.');
-    setCarrito([]);
-    setContadorCarrito(0);
-    setMostrarModalCarrito(false);
+  // Finalizar compra y guardar en Firestore
+  const finalizarCompra = async () => {
+    if (carrito.length === 0) return;
+    
+    setCargandoCompra(true);
+    try {
+      await addDoc(collection(db, 'compras'), {
+        usuario: usuarioActivo ? usuarioActivo.email : 'Cliente Invitado',
+        productos: carrito.map(item => ({ nombre: item.nombre, cantidad: item.cantidad, precio: item.precio })),
+        total: totalPesos,
+        estado: 'pendiente',
+        creadoEn: serverTimestamp()
+      });
+
+      alert('¡Compra registrada con éxito en Firestore! 🐾✨ Te contactaremos para coordinar la entrega.');
+      setCarrito([]);
+      setContadorCarrito(0);
+      setMostrarModalCarrito(false);
+    } catch (error) {
+      console.error('Error al guardar la compra: ', error);
+      alert('Hubo un error al procesar la compra.');
+    } finally {
+      setCargandoCompra(false);
+    }
   };
 
   return (
@@ -51,7 +73,6 @@ export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito,
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h2 style={{ fontWeight: '900', color: '#db2777' }}>🛍️ TIENDA ONLINE</h2>
         
-        {/* Botón flotante del carrito */}
         <button 
           className="retro-button" 
           style={{ background: '#facc15', display: 'flex', alignItems: 'center', gap: '8px' }}
@@ -61,7 +82,6 @@ export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito,
         </button>
       </div>
 
-      {/* Grilla de Productos */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
         {productos.map((prod) => (
           <div key={prod.id} className="retro-card" style={{ padding: '20px', background: prod.color, textAlign: 'center' }}>
@@ -83,7 +103,6 @@ export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito,
         ))}
       </div>
 
-      {/* Modal / Panel Desplegable del Carrito */}
       {mostrarModalCarrito && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000 }}>
           <div className="retro-card" style={{ background: '#fff', padding: '30px', width: '90%', maxWidth: '500px', maxHeight: '80vh', overflowY: 'auto' }}>
@@ -118,8 +137,9 @@ export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito,
                     className="retro-button" 
                     style={{ width: '100%', background: '#4ade80', fontSize: '1.1rem', padding: '12px' }}
                     onClick={finalizarCompra}
+                    disabled={cargandoCompra}
                   >
-                    ✨ FINALIZAR COMPRA
+                    {cargandoCompra ? 'Guardando...' : '✨ FINALIZAR COMPRA'}
                   </button>
                 </div>
               </div>
