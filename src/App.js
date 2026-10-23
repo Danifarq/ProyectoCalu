@@ -15,15 +15,20 @@ import PanelAdmin from './components/PanelAdmin';
 function App() {
   const [pestanaActiva, setPestanaActiva] = useState('inicio');
   const [puntos, setPuntos] = useState(0);
-  const [contadorCarrito, setContadorCarrito] = useState(2);
+  const [contadorCarrito, setContadorCarrito] = useState(0);
   const [usuarioActivo, setUsuarioActivo] = useState(null);
+  const [mostrarModalCarrito, setMostrarModalCarrito] = useState(false);
 
-  // Escuchar si hay una usuaria logueada al cargar la app
+  // Abrir el carrito desde la barra de navegación
+  const abrirCarritoDesdeNavegacion = () => {
+    setPestanaActiva('tienda');
+    setMostrarModalCarrito(true);
+  };
+
   useEffect(() => {
     const desuscribir = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUsuarioActivo(user);
-        // Cargar sus puntos desde Firestore
         const docRef = doc(db, 'usuarios', user.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
@@ -44,10 +49,10 @@ function App() {
         setPestanaActiva={setPestanaActiva} 
         puntos={puntos} 
         contadorCarrito={contadorCarrito} 
+        onAbrirCarrito={abrirCarritoDesdeNavegacion}
       />
       
       <main style={{ padding: '30px 20px', flex: 1 }}>
-        {/* Componente de Login arriba para que se pueda autenticar fácil */}
         <SeccionAutenticacion 
           usuarioActivo={usuarioActivo} 
           setUsuarioActivo={setUsuarioActivo} 
@@ -56,7 +61,13 @@ function App() {
 
         {pestanaActiva === 'inicio' && <InicioHero setPestanaActiva={setPestanaActiva} />}
         {pestanaActiva === 'turnos' && <SeccionTurnos setPuntos={setPuntos} usuarioActivo={usuarioActivo} />}
-        {pestanaActiva === 'tienda' && <SeccionTienda setContadorCarrito={setContadorCarrito} />}
+        {pestanaActiva === 'tienda' && (
+          <SeccionTienda 
+            setContadorCarrito={setContadorCarrito} 
+            mostrarModalCarrito={mostrarModalCarrito}
+            setMostrarModalCarrito={setMostrarModalCarrito}
+          />
+        )}
         {pestanaActiva === 'perfil' && <SeccionPerfil puntos={puntos} usuarioActivo={usuarioActivo} />}
         {pestanaActiva === 'admin' && <PanelAdmin />}
       </main>
