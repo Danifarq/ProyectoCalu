@@ -105,6 +105,13 @@ export default function PanelAdmin() {
                         <li key={idx}>{p.nombre} x{p.cantidad} (${p.precio})</li>
                       ))}
                     </ul>
+                    {c.datosVoucher && (
+  <div style={{ background: '#fef08a', border: '2px solid #121019', padding: '8px 12px', borderRadius: '8px', marginTop: '8px', fontSize: '0.85rem' }}>
+    <p>🎁 <strong>Voucher para:</strong> {c.datosVoucher.paraNombre} ({c.datosVoucher.paraEmail})</p>
+    <p>🔑 <strong>Código:</strong> <code style={{ background: '#fff', padding: '2px 6px', borderRadius: '4px', border: '1px solid #121019' }}>{c.datosVoucher.codigo}</code></p>
+    {c.datosVoucher.mensaje && <p>💬 <i>"{c.datosVoucher.mensaje}"</i></p>}
+  </div>
+)}
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>

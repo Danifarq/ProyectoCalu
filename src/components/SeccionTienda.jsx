@@ -7,9 +7,8 @@ export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito,
     { id: 1, nombre: 'Kit Uñas Neón Completas', categoria: 'Kits', precio: 12000, puntos: 200, color: '#f472b6' },
     { id: 2, nombre: 'Esmalte Cat Eye Mágico', categoria: 'Esmaltes', precio: 8500, puntos: 150, color: '#38bdf8' },
     { id: 3, nombre: 'Set Press-On Custom Gatitos', categoria: 'Press-On', precio: 15000, puntos: 300, color: '#facc15' },
-    { id: 4, nombre: 'Top Coat Glitter Holo', categoria: 'Esmaltes', precio: 6500, puntos: 100, color: '#c084fc' },
-    { id: 5, nombre: 'Kit Kapping Gel Pro', categoria: 'Kits', precio: 18000, puntos: 350, color: '#4ade80' },
-    { id: 6, nombre: 'Set Press-On Pastel Dream', categoria: 'Press-On', precio: 14000, puntos: 280, color: '#fb923c' }
+    { id: 4, nombre: 'Voucher Regalo: Full Nails Art 🎁', categoria: 'Vouchers', precio: 20000, puntos: 400, color: '#c084fc', esVoucher: true },
+    { id: 5, nombre: 'Voucher Regalo: Esmaltado + Kapping 🎁', categoria: 'Vouchers', precio: 15000, puntos: 300, color: '#4ade80', esVoucher: true }
   ];
 
   const [carrito, setCarrito] = useState([]);
@@ -17,7 +16,13 @@ export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito,
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Todos');
   const [busqueda, setBusqueda] = useState('');
 
-  // Filtrar productos por categoría y texto de búsqueda
+  // Datos para el voucher de regalo
+  const [destinatarioNombre, setDestinatarioNombre] = useState('');
+  const [destinatarioEmail, setDestinatarioEmail] = useState('');
+  const [mensajeRegalo, setMensajeRegalo] = useState('');
+
+  const tieneVoucher = carrito.some(item => item.esVoucher);
+
   const productosFiltrados = productos.filter(prod => {
     const coincideCategoria = categoriaSeleccionada === 'Todos' || prod.categoria === categoriaSeleccionada;
     const coincideBusqueda = prod.nombre.toLowerCase().includes(busqueda.toLowerCase());
@@ -50,19 +55,41 @@ export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito,
 
   const finalizarCompra = async () => {
     if (carrito.length === 0) return;
+
+    if (tieneVoucher && (!destinatarioNombre || !destinatarioEmail)) {
+      alert('Por favor, completa el nombre y correo del destinatario del voucher.');
+      return;
+    }
+
     setCargandoCompra(true);
     try {
+      const codigoVoucher = tieneVoucher ? 'GATO-' + Math.random().toString(36).substring(2, 8).toUpperCase() : null;
+
       await addDoc(collection(db, 'compras'), {
-        usuario: usuarioActivo ? usuarioActivo.email : 'Cliente Invitado',
-        productos: carrito.map(item => ({ nombre: item.nombre, cantidad: item.cantidad, precio: item.precio })),
+        comprador: usuarioActivo ? usuarioActivo.email : 'Cliente Invitado',
+        productos: carrito.map(item => ({ nombre: item.nombre, cantidad: item.cantidad, precio: item.precio, esVoucher: item.esVoucher || false })),
         total: totalPesos,
         estado: 'pendiente',
+        datosVoucher: tieneVoucher ? {
+          codigo: codigoVoucher,
+          paraNombre: destinatarioNombre,
+          paraEmail: destinatarioEmail,
+          mensaje: mensajeRegalo,
+          canjeado: false
+        } : null,
         creadoEn: serverTimestamp()
       });
 
-      alert('¡Compra registrada con éxito en Firestore! 🐾✨ Te contactaremos para coordinar el envío.');
+      alert(tieneVoucher 
+        ? `¡Voucher comprado con éxito! 🐾✨ Código asignado: ${codigoVoucher}. Se enviará la info a ${destinatarioEmail}.` 
+        : '¡Compra realizada con éxito! 🐾✨ Te contactaremos para coordinar el envío.'
+      );
+
       setCarrito([]);
       setContadorCarrito(0);
+      setDestinatarioNombre('');
+      setDestinatarioEmail('');
+      setMensajeRegalo('');
       setMostrarModalCarrito(false);
     } catch (error) {
       console.error('Error al guardar la compra: ', error);
@@ -90,14 +117,14 @@ export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito,
         <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
           <input 
             type="text" 
-            placeholder="🔍 Buscar producto..."
+            placeholder="🔍 Buscar productos o vouchers..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             style={{ padding: '10px 15px', borderRadius: '10px', border: '3px solid #121019', fontWeight: 'bold', minWidth: '220px', flex: 1 }}
           />
 
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {['Todos', 'Kits', 'Esmaltes', 'Press-On'].map((cat) => (
+            {['Todos', 'Kits', 'Esmaltes', 'Press-On', 'Vouchers'].map((cat) => (
               <button 
                 key={cat}
                 className="retro-button"
@@ -111,36 +138,32 @@ export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito,
         </div>
       </div>
 
-      {/* Grilla de Productos Filtrados */}
-      {productosFiltrados.length === 0 ? (
-        <p style={{ textAlign: 'center', fontWeight: 'bold', padding: '30px' }}>No encontramos productos con esa búsqueda. 🐾</p>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
-          {productosFiltrados.map((prod) => (
-            <div key={prod.id} className="retro-card" style={{ padding: '20px', background: prod.color, textAlign: 'center' }}>
-              <div style={{ background: '#fff', height: '100px', borderRadius: '10px', border: '3px solid #121019', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', marginBottom: '15px' }}>
-                💅 {prod.categoria}
-              </div>
-              <h3 style={{ fontWeight: '900', marginBottom: '8px', fontSize: '1.1rem' }}>{prod.nombre}</h3>
-              <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>${prod.precio.toLocaleString()} ARS</p>
-              <p style={{ fontWeight: '600', fontSize: '0.85rem', marginBottom: '15px', color: '#4338ca' }}>O canjea por {prod.puntos} Pts</p>
-              
-              <button 
-                className="retro-button" 
-                style={{ background: '#fff', width: '100%', fontSize: '0.9rem' }} 
-                onClick={() => agregarAlCarrito(prod)}
-              >
-                + Agregar al Carrito
-              </button>
+      {/* Grilla de Productos y Vouchers */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
+        {productosFiltrados.map((prod) => (
+          <div key={prod.id} className="retro-card" style={{ padding: '20px', background: prod.color, textAlign: 'center' }}>
+            <div style={{ background: '#fff', height: '100px', borderRadius: '10px', border: '3px solid #121019', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', marginBottom: '15px' }}>
+              {prod.esVoucher ? '🎁 VOUCHER' : '💅 ART. UÑAS'}
             </div>
-          ))}
-        </div>
-      )}
+            <h3 style={{ fontWeight: '900', marginBottom: '8px', fontSize: '1.1rem' }}>{prod.nombre}</h3>
+            <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>${prod.precio.toLocaleString()} ARS</p>
+            <p style={{ fontWeight: '600', fontSize: '0.85rem', marginBottom: '15px', color: '#4338ca' }}>O canjea por {prod.puntos} Pts</p>
+            
+            <button 
+              className="retro-button" 
+              style={{ background: '#fff', width: '100%', fontSize: '0.9rem' }} 
+              onClick={() => agregarAlCarrito(prod)}
+            >
+              {prod.esVoucher ? '🎁 Regalar Voucher' : '+ Agregar al Carrito'}
+            </button>
+          </div>
+        ))}
+      </div>
 
       {/* Modal del Carrito */}
       {mostrarModalCarrito && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000 }}>
-          <div className="retro-card" style={{ background: '#fff', padding: '30px', width: '90%', maxWidth: '500px', maxHeight: '80vh', overflowY: 'auto' }}>
+          <div className="retro-card" style={{ background: '#fff', padding: '30px', width: '90%', maxWidth: '500px', maxHeight: '85vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ fontWeight: '900', color: '#1e1b4b' }}>🛒 Tu Carrito de Compras</h3>
               <button onClick={() => setMostrarModalCarrito(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', fontWeight: 'bold' }}>✕</button>
@@ -164,6 +187,33 @@ export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito,
                   </div>
                 ))}
 
+                {/* Formulario de Voucher de Regalo */}
+                {tieneVoucher && (
+                  <div style={{ background: '#fbcfe8', border: '3px solid #121019', borderRadius: '10px', padding: '15px', marginTop: '15px', marginBottom: '15px' }}>
+                    <h4 style={{ fontWeight: '900', color: '#be185d', marginBottom: '10px' }}>🎁 DATOS DEL REGALO</h4>
+                    <input 
+                      type="text" 
+                      placeholder="Nombre de quien recibe" 
+                      value={destinatarioNombre} 
+                      onChange={e => setDestinatarioNombre(e.target.value)} 
+                      style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '2px solid #121019', marginBottom: '8px', fontWeight: 'bold' }}
+                    />
+                    <input 
+                      type="email" 
+                      placeholder="Correo de quien recibe" 
+                      value={destinatarioEmail} 
+                      onChange={e => setDestinatarioEmail(e.target.value)} 
+                      style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '2px solid #121019', marginBottom: '8px', fontWeight: 'bold' }}
+                    />
+                    <textarea 
+                      placeholder="Mensaje especial (Opcional)" 
+                      value={mensajeRegalo} 
+                      onChange={e => setMensajeRegalo(e.target.value)} 
+                      style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '2px solid #121019', fontWeight: 'bold', height: '60px' }}
+                    />
+                  </div>
+                )}
+
                 <div style={{ marginTop: '20px', borderTop: '3px solid #121019', paddingTop: '15px' }}>
                   <h3 style={{ fontWeight: '900', textAlign: 'right', marginBottom: '15px' }}>
                     Total: ${totalPesos.toLocaleString()} ARS
@@ -174,7 +224,7 @@ export default function SeccionTienda({ setContadorCarrito, mostrarModalCarrito,
                     onClick={finalizarCompra}
                     disabled={cargandoCompra}
                   >
-                    {cargandoCompra ? 'Guardando...' : '✨ FINALIZAR COMPRA'}
+                    {cargandoCompra ? 'Procesando...' : '✨ FINALIZAR Y ENVIAR REGALO'}
                   </button>
                 </div>
               </div>
