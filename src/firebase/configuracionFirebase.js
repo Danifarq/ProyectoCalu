@@ -1,7 +1,7 @@
-
 import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
 
 const firebaseConfig = {
   apiKey: "AIzaSyCWrkw_zFkurVNbs6w-tCkDUEArP39fsLI",
@@ -13,6 +13,9 @@ const firebaseConfig = {
   measurementId: "G-8HG7XNP7V0"
 };
 
-
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+
+// Exportamos la base de datos y la autenticación para usarlas en los componentes
+export const db = getFirestore(app);
+export const auth = getAuth(app);
