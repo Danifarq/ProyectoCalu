@@ -13,6 +13,9 @@ export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, punto
         <button className="retro-button" onClick={() => setPestanaActiva('perfil')} style={{ background: '#f43f5e', color: 'white' }}>
           💎 {puntos.toLocaleString()} Pts
         </button>
+        <button className="retro-button" onClick={() => setPestanaActiva('admin')} style={{ background: '#c084fc' }}>
+  👑 Admin
+</button>
         <div style={{ background: '#facc15', border: '3px solid #121019', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', cursor: 'pointer' }}>
           🛒 {contadorCarrito}
         </div>

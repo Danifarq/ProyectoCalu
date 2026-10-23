@@ -5,7 +5,7 @@ import InicioHero from './components/InicioHero';
 import SeccionTurnos from './components/SeccionTurnos';
 import SeccionTienda from './components/SeccionTienda';
 import SeccionPerfil from './components/SeccionPerfil';
-
+import PanelAdmin from './components/PanelAdmin';
 function App() {
   const [pestanaActiva, setPestanaActiva] = useState('inicio');
   const [puntos, setPuntos] = useState(750000);
@@ -25,6 +25,7 @@ function App() {
         {pestanaActiva === 'turnos' && <SeccionTurnos setPuntos={setPuntos} />}
         {pestanaActiva === 'tienda' && <SeccionTienda setContadorCarrito={setContadorCarrito} />}
         {pestanaActiva === 'perfil' && <SeccionPerfil puntos={puntos} />}
+        {pestanaActiva === 'admin' && <PanelAdmin />}
       </main>
     </div>
   );
