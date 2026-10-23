@@ -57,7 +57,13 @@ export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, punto
         >
           👑 Admin
         </button>
-
+<button 
+  className="retro-button" 
+  style={{ background: pestanaActiva === 'sobremi' ? '#facc15' : '#fff' }} 
+  onClick={() => setPestanaActiva('sobremi')}
+>
+  🐱 Sobre Mí
+</button>
         {/* Ícono interactivo del carrito arriba a la derecha */}
         <button 
           className="retro-button" 

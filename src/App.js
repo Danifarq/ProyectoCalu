@@ -3,7 +3,7 @@ import './App.css';
 import { auth, db } from './firebase/configuracionFirebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-
+import SeccionSobreMi from './components/SeccionSobreMi';
 import BarraNavegacion from './components/BarraNavegacion';
 import InicioHero from './components/InicioHero';
 import SeccionTurnos from './components/SeccionTurnos';
@@ -58,7 +58,7 @@ function App() {
           setUsuarioActivo={setUsuarioActivo} 
           setPuntos={setPuntos} 
         />
-
+{pestanaActiva === 'sobremi' && <SeccionSobreMi setPestanaActiva={setPestanaActiva} />}
         {pestanaActiva === 'inicio' && <InicioHero setPestanaActiva={setPestanaActiva} />}
         {pestanaActiva === 'turnos' && <SeccionTurnos setPuntos={setPuntos} usuarioActivo={usuarioActivo} />}
         {pestanaActiva === 'tienda' && (
