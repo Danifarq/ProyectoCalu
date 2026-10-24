@@ -48,6 +48,13 @@ export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, punto
         >
           💎 {puntos.toLocaleString()} Pts
         </button>
+        <button 
+  className="retro-button" 
+  style={{ background: pestanaActiva === 'resenas' ? '#facc15' : '#fff' }} 
+  onClick={() => setPestanaActiva('resenas')}
+>
+  ⭐ Reseñas
+</button>
 <button 
   className="retro-button" 
   style={{ background: pestanaActiva === 'armatucombo' ? '#facc15' : '#fff' }} 
