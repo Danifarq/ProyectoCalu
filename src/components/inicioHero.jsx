@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/configuracionFirebase';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import marcoRosa from '../assets/marco-rosa.png';
 
 export default function InicioHero({ setPestanaActiva }) {
   const [disenosAprobados, setDisenosAprobados] = useState([]);
@@ -60,42 +61,64 @@ export default function InicioHero({ setPestanaActiva }) {
               className="retro-card" 
               style={{ 
                 padding: '18px', 
-                background: '#fff', 
+           
                 textAlign: 'left', 
                 display: 'flex', 
                 flexDirection: 'column', 
-                justify: 'space-between' 
+                justifyContent: 'space-between',
+                boxShadow: 'none'
               }}
             >
               <div>
-                {/* Imagen Limpia */}
+                {/* Contenedor del Marco con la Imagen Adentro */}
                 {item.imagenUrl ? (
                   <div style={{ 
+                    position: 'relative',
                     width: '100%', 
-                    height: '200px', 
-                    borderRadius: '12px', 
-                    border: '3px solid #121019', 
+                    aspectRatio: '1 / 1', 
                     marginBottom: '12px', 
-                    overflow: 'hidden', 
-                    background: '#fafafa',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    overflow: 'hidden'
                   }}>
+                    {/* 1. Imagen de las Uñas (Fondo / Atrás) */}
                     <img 
                       src={item.imagenUrl} 
                       alt={item.titulo} 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                      style={{ 
+                        width: '86%', 
+                        height: '86%', 
+                        objectFit: 'cover',
+                        borderRadius: '16px',
+                        position: 'absolute'
+                      }} 
+                    />
+
+                    {/* 2. Imagen del Marco sin fondo (Por encima) */}
+                    <img 
+                      src={marcoRosa} 
+                      alt="Marco decorativo" 
+                      style={{ 
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        pointerEvents: 'none',
+                        objectFit: 'contain'
+                      }} 
                     />
                   </div>
                 ) : (
                   <div style={{ 
+                    position: 'relative',
                     width: '100%', 
-                    height: '200px', 
-                    borderRadius: '12px', 
-                    border: '3px solid #121019', 
+                    aspectRatio: '1 / 1', 
                     marginBottom: '12px', 
                     background: '#fef08a', 
+                    borderRadius: '12px',
+                    border: '3px solid #121019',
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'center', 
@@ -105,18 +128,11 @@ export default function InicioHero({ setPestanaActiva }) {
                   </div>
                 )}
 
-                <h3 style={{ fontWeight: '900', fontSize: '1.15rem', marginBottom: '5px', color: '#121019' }}>
-                  {item.titulo}
-                </h3>
-                <p style={{ fontWeight: '600', fontSize: '0.85rem', marginBottom: '10px', color: '#1e1b4b', lineHeight: '1.4' }}>
-                  {item.descripcion}
-                </p>
+               
               </div>
 
               <div>
-                <p style={{ fontSize: '0.8rem', fontWeight: '800', color: '#be185d', marginBottom: '12px' }}>
-                  Propuesto por: {item.autora || 'MichiFan'}
-                </p>
+               
                 <button 
                   className="retro-button" 
                   style={{ background: '#facc15', width: '100%', fontSize: '0.85rem' }}

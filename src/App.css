@@ -23,14 +23,11 @@ body {
 
 /* Estilo general para las tarjetas estilo retro/maximalista */
 .retro-card {
-  border: 4px solid #121019;
-  border-radius: 16px;
-  box-shadow: 6px 6px 0px #121019;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .retro-card:hover {
-  transform: translate(-2px, -2px);
+  transform: translate(-3px, -3px);
   box-shadow: 8px 8px 0px #121019;
 }
 
