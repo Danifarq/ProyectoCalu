@@ -86,7 +86,7 @@ export default function InicioHero({ setPestanaActiva }) {
                       alignItems: 'center',
                       justifyContent: 'center',
                       overflow: 'hidden',
-                      cursor: 'pointer',
+                      cursor: 'inherit',
                       borderRadius: '16px'
                     }}
                   >

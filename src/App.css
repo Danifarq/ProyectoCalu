@@ -6,6 +6,15 @@
   font-style: normal;
   font-display: swap;
 }
+/* Cursor por defecto en toda la página */
+body, button, a, input, select {
+  cursor: url('../public/cursores/patita_normalclick.png') 4 4, auto !important;
+}
+
+/* Cursor cuando hacés click (mousedown / active) */
+body:active, button:active, a:active {
+  cursor: url('../public/cursores/patita_click.png') 4 4, auto !important;
+}
 /* Configuración general de la aplicación */
 body {
   margin: 0;
