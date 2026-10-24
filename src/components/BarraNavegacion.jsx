@@ -1,9 +1,25 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase/configuracionFirebase';
 import { signOut } from 'firebase/auth';
 import fondoBanner from '../assets/banner-2.jpeg';
 import imagenGatito from '../assets/quiron-mirando.png';
 export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, puntos, contadorCarrito, onAbrirCarrito, usuarioActivo }) {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Si bajamos más de 30 píxeles, activamos el estado de "scrolled"
+      if (window.scrollY > 30) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   const cerrarSesion = async () => {
     try {
       await signOut(auth);
@@ -137,14 +153,16 @@ export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, punto
           alt="Gatito asomándose" 
           style={{
             position: 'fixed',
-            bottom: '-15px',  // Lo esconde un poquito hacia abajo para que parezca que sale del borde
-            left: '-60px',    // Lo esconde hacia la izquierda de la pantalla
-            width: '400px',   // Ajusta el tamaño a tu gusto
+            bottom: '-15px',
+            // Al hacer scroll se desplaza a -420px (fuera de la pantalla por la izquierda)
+            left: scrolled ? '-420px' : '-61px',
+            width: '400px',
             height: 'auto',
-            zIndex: 9999,     // Súper alto para que esté por encima de todo
-            pointerEvents: 'none', // Evita que tape clics de otros elementos
-          
-          }} 
+            zIndex: 9999,
+            pointerEvents: 'none',
+            // Transición animada para la propiedad 'left'
+            transition: 'left 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          }}
         />
       </header>
     </>
