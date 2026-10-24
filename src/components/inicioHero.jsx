@@ -5,7 +5,6 @@ import { collection, query, where, onSnapshot } from 'firebase/firestore';
 export default function InicioHero({ setPestanaActiva }) {
   const [disenosAprobados, setDisenosAprobados] = useState([]);
 
-  // Traer solo las propuestas aprobadas por el Admin
   useEffect(() => {
     const q = query(collection(db, 'ideas_disenos'), where('aprobado', '==', true));
     const desuscribir = onSnapshot(q, (snapshot) => {
@@ -56,40 +55,59 @@ export default function InicioHero({ setPestanaActiva }) {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
           {disenosAprobados.map((item) => (
-            <div key={item.id} className="retro-card" style={{ padding: '20px', background: item.color || '#f472b6', textAlign: 'left', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div 
+              key={item.id} 
+              className="retro-card" 
+              style={{ 
+                padding: '18px', 
+                background: '#fff', 
+                textAlign: 'left', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                justify: 'space-between' 
+              }}
+            >
               <div>
-                {/* Contenedor de la Imagen Adaptada */}
+                {/* Imagen Limpia */}
                 {item.imagenUrl ? (
                   <div style={{ 
                     width: '100%', 
-                    height: '180px', 
-                    background: '#fff', 
-                    borderRadius: '10px', 
+                    height: '200px', 
+                    borderRadius: '12px', 
                     border: '3px solid #121019', 
-                    marginBottom: '12px',
+                    marginBottom: '12px', 
+                    overflow: 'hidden', 
+                    background: '#fafafa',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    overflow: 'hidden'
+                    justifyContent: 'center'
                   }}>
                     <img 
                       src={item.imagenUrl} 
                       alt={item.titulo} 
-                      style={{ 
-                        width: '100%', 
-                        height: '100%', 
-                        objectFit: 'contain', // Muestra la imagen entera respetando el tamaño de la caja
-                        padding: '4px'
-                      }} 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                     />
                   </div>
                 ) : (
-                  <div style={{ background: '#fff', height: '180px', borderRadius: '10px', border: '3px solid #121019', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', marginBottom: '12px' }}>
+                  <div style={{ 
+                    width: '100%', 
+                    height: '200px', 
+                    borderRadius: '12px', 
+                    border: '3px solid #121019', 
+                    marginBottom: '12px', 
+                    background: '#fef08a', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    fontSize: '3rem' 
+                  }}>
                     💅✨
                   </div>
                 )}
 
-                <h3 style={{ fontWeight: '900', fontSize: '1.1rem', marginBottom: '5px', color: '#121019' }}>{item.titulo}</h3>
+                <h3 style={{ fontWeight: '900', fontSize: '1.15rem', marginBottom: '5px', color: '#121019' }}>
+                  {item.titulo}
+                </h3>
                 <p style={{ fontWeight: '600', fontSize: '0.85rem', marginBottom: '10px', color: '#1e1b4b', lineHeight: '1.4' }}>
                   {item.descripcion}
                 </p>
@@ -101,7 +119,7 @@ export default function InicioHero({ setPestanaActiva }) {
                 </p>
                 <button 
                   className="retro-button" 
-                  style={{ background: '#fff', width: '100%', fontSize: '0.85rem' }}
+                  style={{ background: '#facc15', width: '100%', fontSize: '0.85rem' }}
                   onClick={() => setPestanaActiva('turnos')}
                 >
                   Pedir este diseño 📅

@@ -1,64 +1,48 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap');
-/* Estado Normal (Patita normal) */
-*, body, button, input, select, a {
-  cursor: url('../public/cursores/patita_normalclick.png') 0 0, auto !important;
-}
-
-/* Estado al hacer Clic (Patita apretada) */
-*:active, button:active, a:active, input:active {
-  cursor: url('../public/cursores/patita_click.png') 0 0, auto !important;
-}
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Outfit', sans-serif;
-}
-
-/* Configuración de la imagen de fondo en toda la aplicación */
+/* Configuración general de la aplicación */
 body {
   margin: 0;
   padding: 0;
-  background-image: url('../public/fondo\ web.jpg'); /* Reemplaza por el nombre exacto de tu imagen */
-  background-size: cover;          /* Cubre toda la pantalla */
-  background-position: center;      /* Centra la imagen */
-  background-repeat: no-repeat;     /* Evita que se repita en mosaico */
-  background-attachment: fixed;     /* Mantiene la imagen fija al hacer scroll */
-  min-height: 100vh;
+  background-color: #fdf2f8; /* Color base retro suave */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Opcional: si quieres un filtro suave sobre la imagen para resaltar las tarjetas retro */
 .App {
   min-height: 100vh;
-  background-color: rgba(255, 255, 255, 0.4); /* Capa translúcida suave sobre el fondo */
-  backdrop-filter: blur(2px);                 /* Desenfoque retro ligero (opcional) */
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
-/* Patrón de Ajedrez Retro */
-.checkerboard-bg {
-  background-color: #e11d48;
-}
-
-/* Tarjetas Estilo Neobrutalism */
+/* Estilo general para las tarjetas estilo retro/maximalista */
 .retro-card {
-  background: #ffffff;
   border: 4px solid #121019;
-  border-radius: 20px;
+  border-radius: 16px;
   box-shadow: 6px 6px 0px #121019;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Botones con estilo */
+.retro-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px #121019;
+}
+
+/* Botones con estilo retro y bordes marcados */
 .retro-button {
-  background-color: #38bdf8;
   border: 3px solid #121019;
   border-radius: 12px;
   padding: 10px 20px;
-  font-weight: 800;
+  font-weight: 900;
   cursor: pointer;
+  box-shadow: 3px 3px 0px #121019;
+  transition: all 0.1s ease;
+}
+
+.retro-button:hover {
+  transform: translate(-1px, -1px);
   box-shadow: 4px 4px 0px #121019;
 }
 
 .retro-button:active {
   transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px #121019;
+  box-shadow: 1px 1px 0px #121019;
 }
