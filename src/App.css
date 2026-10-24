@@ -15,15 +15,23 @@
   font-family: 'Outfit', sans-serif;
 }
 
+/* Configuración de la imagen de fondo en toda la aplicación */
 body {
-  background-color: #fce7f3;
-  color: #121019;
+  margin: 0;
+  padding: 0;
+  background-image: url('../public/fondo\ web.jpg'); /* Reemplaza por el nombre exacto de tu imagen */
+  background-size: cover;          /* Cubre toda la pantalla */
+  background-position: center;      /* Centra la imagen */
+  background-repeat: no-repeat;     /* Evita que se repita en mosaico */
+  background-attachment: fixed;     /* Mantiene la imagen fija al hacer scroll */
+  min-height: 100vh;
 }
 
+/* Opcional: si quieres un filtro suave sobre la imagen para resaltar las tarjetas retro */
 .App {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.4); /* Capa translúcida suave sobre el fondo */
+  backdrop-filter: blur(2px);                 /* Desenfoque retro ligero (opcional) */
 }
 
 /* Patrón de Ajedrez Retro */
