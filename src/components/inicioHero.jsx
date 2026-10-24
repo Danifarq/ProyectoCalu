@@ -5,6 +5,7 @@ import marcoRosa from '../assets/marco-rosa.png';
 
 export default function InicioHero({ setPestanaActiva }) {
   const [disenosAprobados, setDisenosAprobados] = useState([]);
+  const [imagenSeleccionada, setImagenSeleccionada] = useState(null);
 
   useEffect(() => {
     const q = query(collection(db, 'ideas_disenos'), where('aprobado', '==', true));
@@ -17,7 +18,7 @@ export default function InicioHero({ setPestanaActiva }) {
   }, []);
 
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
+    <div style={{ maxWidth: '1100px', width: '100%', margin: '0 auto', textAlign: 'center', padding: '0 15px' }}>
       {/* Banner Principal */}
       <div className="retro-card" style={{ padding: '40px 20px', background: '#fbcfe8', marginBottom: '30px' }}>
         <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#be185d', marginBottom: '15px' }}>
@@ -54,14 +55,17 @@ export default function InicioHero({ setPestanaActiva }) {
           ¡Aún no hay propuestas aprobadas este mes! Subí la tuya desde la sección de Reseñas. 🐾
         </p>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
+          gap: '10px' 
+        }}>
           {disenosAprobados.map((item) => (
             <div 
               key={item.id} 
               className="retro-card" 
               style={{ 
-                padding: '18px', 
-           
+                padding: '12px', 
                 textAlign: 'left', 
                 display: 'flex', 
                 flexDirection: 'column', 
@@ -70,18 +74,22 @@ export default function InicioHero({ setPestanaActiva }) {
               }}
             >
               <div>
-                {/* Contenedor del Marco con la Imagen Adentro */}
+                {/* Contenedor del Marco con la Imagen Adentro y el Botón Centrado */}
                 {item.imagenUrl ? (
-                  <div style={{ 
-                    position: 'relative',
-                    width: '100%', 
-                    aspectRatio: '1 / 1', 
-                    marginBottom: '12px', 
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    overflow: 'hidden'
-                  }}>
+                  <div 
+                    onClick={() => setImagenSeleccionada(imagenSeleccionada === item.id ? null : item.id)}
+                    style={{ 
+                      position: 'relative',
+                      width: '100%', 
+                      aspectRatio: '1 / 1', 
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      overflow: 'hidden',
+                      cursor: 'pointer',
+                      borderRadius: '16px'
+                    }}
+                  >
                     {/* 1. Imagen de las Uñas (Fondo / Atrás) */}
                     <img 
                       src={item.imagenUrl} 
@@ -106,16 +114,45 @@ export default function InicioHero({ setPestanaActiva }) {
                         width: '100%',
                         height: '100%',
                         pointerEvents: 'none',
-                        objectFit: 'contain'
+                        objectFit: 'contain',
+                        zIndex: 2
                       }} 
                     />
+
+                    {/* 3. Botón flotante centrado y blanco semitransparente */}
+                    {imagenSeleccionada === item.id && (
+                      <button 
+                        className="retro-button" 
+                        style={{ 
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          width: '80%',
+                          background: 'rgba(255, 255, 255, 0.100)', // Blanco semitransparente
+                          backdropFilter: 'blur(4px)',               // Efecto blur sutil
+                          color: '#121019',
+                          fontWeight: '900',
+                          fontSize: '0.85rem', 
+                          padding: '10px 12px',
+                          zIndex: 3,
+                          border: '2px solid #121019',
+                          boxShadow: '0 6px 12px rgba(0,0,0,0.60)'
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Evita que se deseleccione al hacer clic en el botón
+                          setPestanaActiva('turnos');
+                        }}
+                      >
+                        Pedir este diseño 📅
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <div style={{ 
                     position: 'relative',
                     width: '100%', 
                     aspectRatio: '1 / 1', 
-                    marginBottom: '12px', 
                     background: '#fef08a', 
                     borderRadius: '12px',
                     border: '3px solid #121019',
@@ -127,19 +164,6 @@ export default function InicioHero({ setPestanaActiva }) {
                     💅✨
                   </div>
                 )}
-
-               
-              </div>
-
-              <div>
-               
-                <button 
-                  className="retro-button" 
-                  style={{ background: '#facc15', width: '100%', fontSize: '0.85rem' }}
-                  onClick={() => setPestanaActiva('turnos')}
-                >
-                  Pedir este diseño 📅
-                </button>
               </div>
             </div>
           ))}
