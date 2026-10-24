@@ -1,122 +1,122 @@
 import React, { useState } from 'react';
 import { auth, db } from '../firebase/configuracionFirebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
-export default function SeccionAutenticacion({ usuarioActivo, setUsuarioActivo, setPuntos }) {
+export default function SeccionAutenticacion({ usuarioActivo }) {
   const [esRegistro, setEsRegistro] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
 
-  // Manejar Registro o Inicio de Sesión
-  const handleSubmit = async (e) => {
+  const manejarAuth = async (e) => {
     e.preventDefault();
-    setError('');
     setCargando(true);
-
     try {
       if (esRegistro) {
-        // Registrar nuevo usuario
-        const credencial = await createUserWithEmailAndPassword(auth, email, password);
-        const user = credencial.user;
-
-        // Crear su documento inicial en Firestore con 0 puntos o un bono de bienvenida
-        await setDoc(doc(db, 'usuarios', user.uid), {
-          email: user.email,
-          puntos: 500, // Bono de bienvenida por registrarse
-          nivel: 'Gato Bronce'
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        await setDoc(doc(db, 'usuarios', cred.user.uid), {
+          email: cred.user.email,
+          puntos: 150,
+          mesesSeguidos: 0,
+          esClientaFiel: false
         });
-
-        setUsuarioActivo(user);
-        setPuntos(500);
+        alert('¡Cuenta creada con éxito! 🐾✨');
       } else {
-        // Iniciar sesión
-        const credencial = await signInWithEmailAndPassword(auth, email, password);
-        const user = credencial.user;
-
-        // Buscar sus puntos en Firestore
-        const docRef = doc(db, 'usuarios', user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setPuntos(docSnap.data().puntos || 0);
-        }
-
-        setUsuarioActivo(user);
+        await signInWithEmailAndPassword(auth, email, password);
+        alert('¡Bienvenida de nuevo a Gatitos Nails! 💖');
       }
-    } catch (err) {
-      console.error(err);
-      setError('Ocurrió un error. Verifica tus datos o contraseña (mínimo 6 caracteres).');
+    } catch (error) {
+      console.error(error);
+      alert('Error de autenticación: ' + error.message);
     } finally {
       setCargando(false);
     }
   };
 
-  // Cerrar sesión
   const cerrarSesion = async () => {
-    await signOut(auth);
-    setUsuarioActivo(null);
+    try {
+      await signOut(auth);
+      alert('Sesión cerrada correctamente 🐾');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   if (usuarioActivo) {
     return (
-      <div style={{ textAlign: 'center', padding: '20px' }}>
-        <p style={{ fontWeight: 'bold', marginBottom: '10px' }}>👤 Conectada como: {usuarioActivo.email}</p>
-        <button className="retro-button" style={{ background: '#f87171' }} onClick={cerrarSesion}>
-          🚪 Cerrar Sesión
-        </button>
+      <div style={{ maxWidth: '500px', margin: '0 auto', textAlign: 'center' }}>
+        <div className="retro-card" style={{ padding: '35px', background: '#fbcfe8' }}>
+          <h2 style={{ fontWeight: '900', color: '#be185d', marginBottom: '15px' }}>
+            🐱 ¡HOLA, {usuarioActivo.email}!
+          </h2>
+          <p style={{ fontWeight: '700', marginBottom: '25px', color: '#1e1b4b' }}>
+            Ya estás conectada al sistema de Gatitos Nails.
+          </p>
+          <button 
+            className="retro-button" 
+            style={{ background: '#ef4444', color: '#fff', fontSize: '1.1rem', padding: '12px 25px' }}
+            onClick={cerrarSesion}
+          >
+            🚪 CERRAR SESIÓN
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: '400px', margin: '20px auto', padding: '25px', background: '#fbcfe8', border: '4px solid #121019', borderRadius: '15px', boxShadow: '5px 5px 0px #121019' }}>
-      <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '15px', color: '#be185d' }}>
-        {esRegistro ? '✨ CREAR CUENTA VIP' : '🐾 INICIAR SESIÓN'}
-      </h3>
+    <div style={{ maxWidth: '450px', margin: '0 auto' }}>
+      <div className="retro-card" style={{ padding: '30px', background: '#fef08a' }}>
+        <h2 style={{ fontWeight: '900', color: '#854d0e', marginBottom: '20px', textAlign: 'center' }}>
+          {esRegistro ? '✨ REGISTRO DE CLIENTAS' : '🔑 INICIAR SESIÓN'}
+        </h2>
 
-      {error && <p style={{ color: '#b91c1c', fontSize: '0.9rem', marginBottom: '10px', fontWeight: 'bold' }}>{error}</p>}
+        <form onSubmit={manejarAuth} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          <div>
+            <label style={{ display: 'block', fontWeight: '800', marginBottom: '5px' }}>Correo Electrónico:</label>
+            <input 
+              type="email" 
+              placeholder="tu@correo.com" 
+              value={email} 
+              onChange={e => setEmail(e.target.value)}
+              style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '3px solid #121019', fontWeight: 'bold' }}
+              required
+            />
+          </div>
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', fontWeight: '800', marginBottom: '5px' }}>Correo Electrónico:</label>
-          <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required 
-            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '3px solid #121019', fontWeight: 'bold' }}
-          />
-        </div>
+          <div>
+            <label style={{ display: 'block', fontWeight: '800', marginBottom: '5px' }}>Contraseña:</label>
+            <input 
+              type="password" 
+              placeholder="••••••••" 
+              value={password} 
+              onChange={e => setPassword(e.target.value)}
+              style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '3px solid #121019', fontWeight: 'bold' }}
+              required
+            />
+          </div>
 
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', fontWeight: '800', marginBottom: '5px' }}>Contraseña:</label>
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
-            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '3px solid #121019', fontWeight: 'bold' }}
-          />
-        </div>
+          <button 
+            type="submit" 
+            className="retro-button" 
+            style={{ background: '#4ade80', fontSize: '1.1rem', padding: '12px', marginTop: '10px' }}
+            disabled={cargando}
+          >
+            {cargando ? 'Procesando...' : (esRegistro ? '✨ REGISTRARSE' : '🚀 ENTRAR')}
+          </button>
+        </form>
 
-        <button 
-          type="submit" 
-          disabled={cargando}
-          className="retro-button" 
-          style={{ width: '100%', background: '#38bdf8', marginBottom: '10px' }}
-        >
-          {cargando ? 'Procesando...' : esRegistro ? 'Registrarse y ganar +500 Pts' : 'Entrar'}
-        </button>
-      </form>
-
-      <p 
-        style={{ textAlign: 'center', cursor: 'pointer', fontWeight: '800', fontSize: '0.9rem', color: '#4338ca', marginTop: '10px' }}
-        onClick={() => setEsRegistro(!esRegistro)}
-      >
-        {esRegistro ? '¿Ya tienes cuenta? Inicia sesión aquí' : '¿No tienes cuenta? Regístrate gratis'}
-      </p>
+        <p style={{ textAlign: 'center', marginTop: '20px', fontWeight: 'bold', fontSize: '0.9rem' }}>
+          {esRegistro ? '¿Ya tienes una cuenta?' : '¿No tienes cuenta?'} {' '}
+          <span 
+            style={{ color: '#be185d', cursor: 'pointer', textDecoration: 'underline' }}
+            onClick={() => setEsRegistro(!esRegistro)}
+          >
+            {esRegistro ? 'Inicia sesión aquí' : 'Regístrate aquí'}
+          </span>
+        </p>
+      </div>
     </div>
   );
 }
