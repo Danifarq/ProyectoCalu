@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
-import { db } from '../firebase/configuracionFirebase';
+import { auth, db } from '../firebase/configuracionFirebase';
+import { signOut } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 
 export default function SeccionPerfil({ puntos, setPuntos, usuarioActivo, datosUsuario, setDatosUsuario }) {
   const [mensajeCanje, setMensajeCanje] = useState('');
   const [cargandoMembresia, setCargandoMembresia] = useState(false);
 
-  // Meses seguidos que lleva la clienta asistiendo (simulado o traído de Firestore)
   const mesesSeguidos = datosUsuario?.mesesSeguidos || 0;
   const esClientaFiel = datosUsuario?.esClientaFiel || mesesSeguidos >= 7;
 
-  // Recompensas de Puntos
+  const cerrarSesion = async () => {
+    try {
+      await signOut(auth);
+      alert('Sesión cerrada correctamente 🐾');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
+
   const recompensas = [
     { id: 1, titulo: '10% OFF en tu próximo Turno', puntosRequeridos: 300, color: '#fbcfe8' },
     { id: 2, titulo: 'Esmaltado Semipermanente Gratis', puntosRequeridos: 600, color: '#bae6fd' },
@@ -25,14 +33,13 @@ export default function SeccionPerfil({ puntos, setPuntos, usuarioActivo, datosU
 
   const nivelVIP = obtenerNivelVIP();
 
-  // Activar membresía comprándola o por racha de 7 meses
   const abonarClientaFiel = async () => {
     if (!usuarioActivo) {
       alert('Debes iniciar sesión para suscribirte como Clienta Fiel.');
       return;
     }
 
-    if (window.confirm('¿Deseas abonar la Membresía Clienta Fiel por $5.000 ARS/mes para desbloquear la agenda anticipada?')) {
+    if (window.confirm('¿Deseas abonar la Membresía Clienta Fiel por $5.000 ARS/mes?')) {
       setCargandoMembresia(true);
       try {
         const userRef = doc(db, 'usuarios', usuarioActivo.uid);
@@ -42,32 +49,12 @@ export default function SeccionPerfil({ puntos, setPuntos, usuarioActivo, datosU
           setDatosUsuario(prev => ({ ...prev, esClientaFiel: true }));
         }
 
-        alert('¡Felicidades! Ahora eres CLIENTA FIEL 👑. Tu agenda del próximo mes ya está disponible una semana antes.');
+        alert('¡Felicidades! Ahora eres CLIENTA FIEL 👑.');
       } catch (error) {
-        console.error('Error al activar membresía:', error);
-        alert('Ocurrió un error al procesar el pago.');
+        console.error('Error:', error);
       } finally {
         setCargandoMembresia(false);
       }
-    }
-  };
-
-  const canjearRecompensa = async (recompensa) => {
-    if (puntos < recompensa.puntosRequeridos) {
-      alert('No tienes suficientes puntos todavía.');
-      return;
-    }
-
-    const nuevosPuntos = puntos - recompensa.puntosRequeridos;
-    try {
-      if (usuarioActivo) {
-        const userRef = doc(db, 'usuarios', usuarioActivo.uid);
-        await updateDoc(userRef, { puntos: nuevosPuntos });
-      }
-      setPuntos(nuevosPuntos);
-      setMensajeCanje(`¡Felicidades! Canjeaste: "${recompensa.titulo}".`);
-    } catch (error) {
-      console.error('Error al canjear:', error);
     }
   };
 
@@ -83,6 +70,15 @@ export default function SeccionPerfil({ puntos, setPuntos, usuarioActivo, datosU
             <p style={{ fontWeight: '600', color: '#4b5563', marginTop: '5px' }}>
               {usuarioActivo ? usuarioActivo.email : 'Usuario Invitado'}
             </p>
+            {usuarioActivo && (
+              <button 
+                className="retro-button" 
+                style={{ background: '#ef4444', color: '#fff', padding: '6px 12px', fontSize: '0.85rem', marginTop: '10px' }}
+                onClick={cerrarSesion}
+              >
+                🚪 Cerrar Sesión
+              </button>
+            )}
           </div>
 
           <div style={{ textAlign: 'right' }}>
@@ -105,7 +101,7 @@ export default function SeccionPerfil({ puntos, setPuntos, usuarioActivo, datosU
         </div>
       </div>
 
-      {/* TARJETA EXCLUSIVA: CLIENTA FIEL */}
+      {/* CLIENTA FIEL */}
       <div className="retro-card" style={{ padding: '25px', background: esClientaFiel ? '#fef08a' : '#fbcfe8', marginBottom: '30px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
           <div>
@@ -122,7 +118,7 @@ export default function SeccionPerfil({ puntos, setPuntos, usuarioActivo, datosU
 
           <div>
             {esClientaFiel ? (
-              <span className="retro-button" style={{ background: '#4ade80', cursor: 'default', display: 'inline-block' }}>
+              <span className="retro-button" style={{ background: '#4ade80', cursor: 'default' }}>
                 ✨ ¡ERES CLIENTA FIEL!
               </span>
             ) : (
@@ -136,51 +132,6 @@ export default function SeccionPerfil({ puntos, setPuntos, usuarioActivo, datosU
               </button>
             )}
           </div>
-        </div>
-
-        {/* Barra de progreso de los 7 meses */}
-        {!esClientaFiel && (
-          <div style={{ marginTop: '15px', background: '#fff', borderRadius: '10px', border: '2px solid #121019', height: '20px', overflow: 'hidden' }}>
-            <div style={{ 
-              width: `${(mesesSeguidos / 7) * 100}%`, 
-              background: '#be185d', 
-              height: '100%', 
-              transition: 'width 0.3s ease' 
-            }} />
-          </div>
-        )}
-      </div>
-
-      {mensajeCanje && (
-        <div style={{ padding: '15px', background: '#dcfce7', border: '3px solid #121019', borderRadius: '12px', marginBottom: '20px', fontWeight: 'bold', color: '#15803d', textAlign: 'center' }}>
-          ✨ {mensajeCanje}
-        </div>
-      )}
-
-      {/* Catálogo de Canje */}
-      <div className="retro-card" style={{ padding: '25px', background: '#f8fafc' }}>
-        <h3 style={{ fontWeight: '900', marginBottom: '20px', color: '#4338ca', textAlign: 'center' }}>
-          🎁 CATÁLOGO DE RECOMPENSAS
-        </h3>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          {recompensas.map((item) => (
-            <div key={item.id} style={{ background: item.color, border: '3px solid #121019', borderRadius: '12px', padding: '15px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-              <div>
-                <h4 style={{ fontWeight: '900', fontSize: '1.1rem' }}>{item.titulo}</h4>
-                <p style={{ fontWeight: '700', fontSize: '0.9rem', color: '#334155' }}>Costo: {item.puntosRequeridos} Pts</p>
-              </div>
-
-              <button 
-                className="retro-button" 
-                style={{ background: puntos >= item.puntosRequeridos ? '#4ade80' : '#e2e8f0' }}
-                onClick={() => canjearRecompensa(item)}
-                disabled={puntos < item.puntosRequeridos}
-              >
-                {puntos >= item.puntosRequeridos ? '✨ CANJEAR' : 'Puntos Insuficientes'}
-              </button>
-            </div>
-          ))}
         </div>
       </div>
     </div>
