@@ -29,7 +29,6 @@ function App() {
     const desuscribir = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUsuarioActivo(user);
-        // Obtener datos guardados del usuario en Firestore
         try {
           const userDoc = await getDoc(doc(db, 'usuarios', user.uid));
           if (userDoc.exists()) {
@@ -54,17 +53,17 @@ function App() {
       <DecoracionGatitos />
 
       {/* Barra superior de navegación */}
-     <BarraNavegacion 
-  pestanaActiva={pestanaActiva} 
-  setPestanaActiva={setPestanaActiva} 
-  puntos={puntos}
-  contadorCarrito={contadorCarrito}
-  usuarioActivo={usuarioActivo}
-  onAbrirCarrito={() => {
-    setPestanaActiva('tienda');
-    setMostrarModalCarrito(true);
-  }}
-/>
+      <BarraNavegacion 
+        pestanaActiva={pestanaActiva} 
+        setPestanaActiva={setPestanaActiva} 
+        puntos={puntos}
+        contadorCarrito={contadorCarrito}
+        usuarioActivo={usuarioActivo}
+        onAbrirCarrito={() => {
+          setPestanaActiva('tienda');
+          setMostrarModalCarrito(true);
+        }}
+      />
 
       {/* Contenido principal según la pestaña seleccionada */}
       <main style={{ flex: 1, padding: '30px 20px', maxWidth: '1100px', margin: '0 auto', width: '100%' }}>

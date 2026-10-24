@@ -93,8 +93,16 @@ export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, punto
             👑 Admin
           </button>
 
-          {/* Botón de Cerrar Sesión rápido en la barra */}
-          {usuarioActivo && (
+          {/* Si NO hay usuario activo, muestra el botón de Iniciar Sesión / Registrarse */}
+          {!usuarioActivo ? (
+            <button 
+              className="retro-button" 
+              style={{ background: pestanaActiva === 'auth' ? '#facc15' : '#4ade80' }} 
+              onClick={() => setPestanaActiva('auth')}
+            >
+              🔑 Ingresar / Registrarse
+            </button>
+          ) : (
             <button 
               className="retro-button" 
               style={{ background: '#ef4444', color: '#fff', padding: '8px 12px' }} 
