@@ -48,7 +48,13 @@ export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, punto
         >
           💎 {puntos.toLocaleString()} Pts
         </button>
-
+<button 
+  className="retro-button" 
+  style={{ background: pestanaActiva === 'armatucombo' ? '#facc15' : '#fff' }} 
+  onClick={() => setPestanaActiva('armatucombo')}
+>
+  🎨 Arma tu Combo
+</button>
         {/* Botón de Panel de Administración */}
         <button 
           className="retro-button" 

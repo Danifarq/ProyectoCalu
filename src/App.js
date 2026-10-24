@@ -11,7 +11,7 @@ import SeccionTienda from './components/SeccionTienda';
 import SeccionPerfil from './components/SeccionPerfil';
 import SeccionAutenticacion from './components/SeccionAutenticacion';
 import PanelAdmin from './components/PanelAdmin';
-
+import SeccionArmaTuServicio from './components/SeccionArmaTuServicio';
 function App() {
   const [pestanaActiva, setPestanaActiva] = useState('inicio');
   const [puntos, setPuntos] = useState(0);
@@ -58,6 +58,12 @@ function App() {
           setUsuarioActivo={setUsuarioActivo} 
           setPuntos={setPuntos} 
         />
+        {pestanaActiva === 'armatucombo' && (
+  <SeccionArmaTuServicio 
+    usuarioActivo={usuarioActivo} 
+    setPestanaActiva={setPestanaActiva} 
+  />
+)}
 {pestanaActiva === 'sobremi' && <SeccionSobreMi setPestanaActiva={setPestanaActiva} />}
         {pestanaActiva === 'inicio' && <InicioHero setPestanaActiva={setPestanaActiva} />}
         {pestanaActiva === 'turnos' && <SeccionTurnos setPuntos={setPuntos} usuarioActivo={usuarioActivo} />}
