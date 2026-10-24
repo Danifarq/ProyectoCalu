@@ -2,7 +2,7 @@ import React from 'react';
 import { auth } from '../firebase/configuracionFirebase';
 import { signOut } from 'firebase/auth';
 import fondoBanner from '../assets/banner-2.jpeg';
-
+import imagenGatito from '../assets/quiron-mirando.png';
 export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, puntos, contadorCarrito, onAbrirCarrito, usuarioActivo }) {
   const cerrarSesion = async () => {
     try {
@@ -131,7 +131,21 @@ export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, punto
               </button>
             )}
           </nav>
-        </div>
+        </div>{/* --- 3. GATITO ASOMÁNDOSE DESDE EL BORDE --- */}
+        <img 
+          src={imagenGatito} 
+          alt="Gatito asomándose" 
+          style={{
+            position: 'fixed',
+            bottom: '-15px',  // Lo esconde un poquito hacia abajo para que parezca que sale del borde
+            left: '-60px',    // Lo esconde hacia la izquierda de la pantalla
+            width: '400px',   // Ajusta el tamaño a tu gusto
+            height: 'auto',
+            zIndex: 9999,     // Súper alto para que esté por encima de todo
+            pointerEvents: 'none', // Evita que tape clics de otros elementos
+          
+          }} 
+        />
       </header>
     </>
   );
