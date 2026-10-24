@@ -4,54 +4,85 @@ import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 
 
 export default function SeccionResenas({ usuarioActivo }) {
   const [resenas, setResenas] = useState([]);
-  const [nombre, setNombre] = useState('');
   const [comentario, setComentario] = useState('');
   const [estrellas, setEstrellas] = useState(5);
-  const [servicioRecibido, setServicioRecibido] = useState('Nail Art Kapping');
+
+  // Estados para subir idea de diseño
+  const [tituloIdea, setTituloIdea] = useState('');
+  const [descIdea, setDescIdea] = useState('');
+  const [imagenBase64, setImagenBase64] = useState('');
   const [cargando, setCargando] = useState(false);
 
-  // Escuchar las reseñas en tiempo real desde Firestore
   useEffect(() => {
     const q = query(collection(db, 'resenas'), orderBy('creadoEn', 'desc'));
     const desuscribir = onSnapshot(q, (snapshot) => {
-      const listaResenas = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setResenas(listaResenas);
+      setResenas(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
-
     return () => desuscribir();
   }, []);
 
-  // Calcular el promedio de estrellas
-  const promedioEstrellas = resenas.length > 0
-    ? (resenas.reduce((acc, r) => acc + (r.estrellas || 5), 0) / resenas.length).toFixed(1)
-    : '5.0';
+  // Convertir el archivo seleccionado por la clienta a formato Base64
+  const manejarSeleccionImagen = (e) => {
+    const archivo = e.target.files[0];
+    if (archivo) {
+      if (archivo.size > 1024 * 1024 * 2) { // Límite de 2MB
+        alert('La imagen es demasiado grande. Selecciona un archivo menor a 2MB.');
+        return;
+      }
+      const lector = new FileReader();
+      lector.onloadend = () => {
+        setImagenBase64(lector.result);
+      };
+      lector.readAsDataURL(archivo);
+    }
+  };
 
-  const enviarResena = async (e) => {
+  const enviarIdea = async (e) => {
     e.preventDefault();
-    if (!comentario.trim()) {
-      alert('Por favor, escribe un comentario sobre tu experiencia.');
+    if (!tituloIdea || !descIdea) {
+      alert('Por favor completa el título y la descripción de tu propuesta.');
       return;
     }
 
     setCargando(true);
     try {
-      await addDoc(collection(db, 'resenas'), {
-        autor: nombre.trim() || (usuarioActivo ? usuarioActivo.email.split('@')[0] : 'Gatita Anónima'),
-        comentario: comentario.trim(),
-        estrellas: Number(estrellas),
-        servicio: servicioRecibido,
+      await addDoc(collection(db, 'ideas_disenos'), {
+        titulo: tituloIdea,
+        descripcion: descIdea,
+        imagenUrl: imagenBase64 || '',
+        autora: usuarioActivo ? usuarioActivo.email.split('@')[0] : 'Clienta Anónima',
+        aprobado: false, // Inicia pendiente hasta aprobación por Admin
         creadoEn: serverTimestamp()
       });
 
-      setComentario('');
-      setNombre('');
-      alert('¡Muchas gracias por tu reseña! 🐾✨');
+      alert('¡Idea enviada con éxito! 🐾✨ La revisaremos para destacarla en la portada.');
+      setTituloIdea('');
+      setDescIdea('');
+      setImagenBase64('');
     } catch (error) {
-      console.error('Error al guardar la reseña:', error);
-      alert('Ocurrió un error al enviar tu comentario.');
+      console.error('Error al subir idea:', error);
+      alert('Ocurrió un error al enviar tu propuesta.');
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  const enviarResena = async (e) => {
+    e.preventDefault();
+    if (!comentario.trim()) return;
+
+    setCargando(true);
+    try {
+      await addDoc(collection(db, 'resenas'), {
+        autor: usuarioActivo ? usuarioActivo.email.split('@')[0] : 'Clienta Anónima',
+        comentario: comentario.trim(),
+        estrellas: Number(estrellas),
+        creadoEn: serverTimestamp()
+      });
+      setComentario('');
+      alert('¡Muchas gracias por tu reseña! 🐾');
+    } catch (error) {
+      console.error(error);
     } finally {
       setCargando(false);
     }
@@ -59,124 +90,103 @@ export default function SeccionResenas({ usuarioActivo }) {
 
   return (
     <div style={{ maxWidth: '850px', margin: '0 auto' }}>
-      {/* Banner Principal de Opiniones */}
-      <div className="retro-card" style={{ padding: '30px', background: '#fbcfe8', marginBottom: '30px', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '2.2rem', fontWeight: '900', color: '#be185d', marginBottom: '10px' }}>
-          ⭐ OPINIONES DE NAILEXPERIENCIAS 🐾
-        </h2>
-        <p style={{ fontWeight: '700', color: '#4338ca', marginBottom: '15px' }}>
-          Descubre lo que dicen nuestras clientas sobre sus sets soñados.
-        </p>
-        
-        <div style={{ display: 'inline-block', background: '#fff', padding: '10px 20px', borderRadius: '12px', border: '3px solid #121019' }}>
-          <span style={{ fontSize: '1.8rem', fontWeight: '900', color: '#eab308' }}>
-            {'⭐'.repeat(Math.round(promedioEstrellas))} {promedioEstrellas} / 5.0
-          </span>
-          <p style={{ fontWeight: '800', fontSize: '0.85rem', color: '#6b7280', marginTop: '3px' }}>
-            Basado en {resenas.length} reseñas
-          </p>
-        </div>
-      </div>
-
-      {/* Formulario para Dejar Reseña */}
-      <div className="retro-card" style={{ padding: '25px', background: '#fff', marginBottom: '35px' }}>
-        <h3 style={{ fontWeight: '900', color: '#be185d', marginBottom: '15px', textAlign: 'center' }}>
-          ✍️ ¡DEJA TU RESEÑA!
+      {/* FORMULARIO DE PROPUESTA DE DISEÑO */}
+      <div className="retro-card" style={{ padding: '25px', background: '#c084fc', marginBottom: '30px' }}>
+        <h3 style={{ fontWeight: '900', color: '#fff', marginBottom: '15px', textAlign: 'center' }}>
+          📸 ¡SUBE TU PROPUESTA DE DISEÑO DE UÑAS!
         </h3>
+        <p style={{ color: '#fff', fontWeight: '700', textAlign: 'center', marginBottom: '15px', fontSize: '0.9rem' }}>
+          Selecciona una foto desde tu dispositivo. Las propuestas aprobadas se mostrarán en los "Diseños Destacados" de la portada.
+        </p>
 
-        <form onSubmit={enviarResena} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
-            <div>
-              <label style={{ display: 'block', fontWeight: '800', marginBottom: '5px' }}>Tu Nombre o Apodo:</label>
-              <input 
-                type="text" 
-                placeholder={usuarioActivo ? usuarioActivo.email.split('@')[0] : "Ej: MichiFan123"} 
-                value={nombre} 
-                onChange={(e) => setNombre(e.target.value)} 
-                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '3px solid #121019', fontWeight: 'bold' }}
-              />
-            </div>
+        <form onSubmit={enviarIdea} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <input 
+            type="text" 
+            placeholder="Título de la idea (Ej: Garritas Pastel Neón)" 
+            value={tituloIdea} 
+            onChange={e => setTituloIdea(e.target.value)}
+            style={{ padding: '10px', borderRadius: '8px', border: '3px solid #121019', fontWeight: 'bold' }}
+          />
 
-            <div>
-              <label style={{ display: 'block', fontWeight: '800', marginBottom: '5px' }}>Calificación:</label>
-              <select 
-                value={estrellas} 
-                onChange={(e) => setEstrellas(e.target.value)}
-                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '3px solid #121019', fontWeight: 'bold' }}
-              >
-                <option value={5}>⭐⭐⭐⭐⭐ (5/5) ¡Amé mi set!</option>
-                <option value={4}>⭐⭐⭐⭐ (4/5) Muy lindo</option>
-                <option value={3}>⭐⭐⭐ (3/3) Aceptable</option>
-                <option value={2}>⭐⭐ (2/5) Regular</option>
-                <option value={1}>⭐ (1/5) Mala experiencia</option>
-              </select>
-            </div>
-          </div>
+          <textarea 
+            placeholder="Descripción detallada (colores, cristales, estilo...)" 
+            value={descIdea} 
+            onChange={e => setDescIdea(e.target.value)}
+            style={{ padding: '10px', borderRadius: '8px', border: '3px solid #121019', fontWeight: 'bold', height: '60px' }}
+          />
 
+          {/* Campo de archivo local */}
           <div>
-            <label style={{ display: 'block', fontWeight: '800', marginBottom: '5px' }}>Servicio Realizado:</label>
-            <select 
-              value={servicioRecibido} 
-              onChange={(e) => setServicioRecibido(e.target.value)}
-              style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '3px solid #121019', fontWeight: 'bold' }}
-            >
-              <option value="Nail Art Kapping">Nail Art Kapping Gel</option>
-              <option value="Esmaltado Semipermanente">Esmaltado Semipermanente</option>
-              <option value="Set Press-On Custom">Set Press-On Custom</option>
-              <option value="Compra en Tienda Online">Productos de Tienda Online</option>
-            </select>
-          </div>
-
-          <div>
-            <label style={{ display: 'block', fontWeight: '800', marginBottom: '5px' }}>Tu Comentario:</label>
-            <textarea 
-              placeholder="Cuéntanos qué tal te pareció el diseño, la atención y el espacio..." 
-              value={comentario} 
-              onChange={(e) => setComentario(e.target.value)} 
-              rows={3} 
-              style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '3px solid #121019', fontWeight: 'bold' }}
+            <label style={{ display: 'block', color: '#fff', fontWeight: '800', marginBottom: '5px' }}>
+              Subir Foto desde tu dispositivo:
+            </label>
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={manejarSeleccionImagen}
+              style={{ background: '#fff', padding: '8px', borderRadius: '8px', border: '3px solid #121019', width: '100%', fontWeight: 'bold' }}
             />
           </div>
+
+          {/* Vista previa de la imagen cargada */}
+          {imagenBase64 && (
+            <div style={{ textAlign: 'center', marginTop: '10px' }}>
+              <p style={{ color: '#fff', fontWeight: 'bold', fontSize: '0.85rem' }}>Vista previa:</p>
+              <img 
+                src={imagenBase64} 
+                alt="Vista previa" 
+                style={{ maxHeight: '120px', borderRadius: '8px', border: '2px solid #121019', marginTop: '5px' }} 
+              />
+            </div>
+          )}
 
           <button 
             type="submit" 
             className="retro-button" 
-            style={{ background: '#4ade80', fontSize: '1.1rem', padding: '12px' }}
+            style={{ background: '#facc15', fontSize: '1rem', padding: '10px', marginTop: '10px' }}
             disabled={cargando}
           >
-            {cargando ? 'Publicando...' : '✨ PUBLICAR MI RESEÑA'}
+            ✨ ENVIAR PROPUESTA A REVISIÓN
           </button>
         </form>
       </div>
 
-      {/* Lista de Reseñas Publicadas */}
-      <h3 style={{ fontWeight: '900', color: '#4338ca', marginBottom: '20px', textAlign: 'center' }}>
-        💬 LO QUE DICEN NUESTRAS CLIENTAS
-      </h3>
+      {/* SECCIÓN DE RESEÑAS */}
+      <div className="retro-card" style={{ padding: '25px', background: '#fff', marginBottom: '30px' }}>
+        <h3 style={{ fontWeight: '900', color: '#be185d', marginBottom: '15px', textAlign: 'center' }}>
+          ⭐ DEJAR RESEÑA DEL SERVICIO
+        </h3>
+        <form onSubmit={enviarResena} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <select 
+            value={estrellas} 
+            onChange={e => setEstrellas(e.target.value)}
+            style={{ padding: '10px', borderRadius: '8px', border: '3px solid #121019', fontWeight: 'bold' }}
+          >
+            <option value={5}>⭐⭐⭐⭐⭐ (5/5)</option>
+            <option value={4}>⭐⭐⭐⭐ (4/5)</option>
+            <option value={3}>⭐⭐⭐ (3/5)</option>
+          </select>
+          <textarea 
+            placeholder="Escribe tu opinión sobre la atención y el espacio..." 
+            value={comentario} 
+            onChange={e => setComentario(e.target.value)}
+            style={{ padding: '10px', borderRadius: '8px', border: '3px solid #121019', fontWeight: 'bold' }}
+          />
+          <button type="submit" className="retro-button" style={{ background: '#4ade80' }}>
+            Publicar Reseña
+          </button>
+        </form>
+      </div>
 
-      {resenas.length === 0 ? (
-        <p style={{ textAlign: 'center', fontWeight: 'bold', color: '#6b7280' }}>
-          ¡Sé la primera en dejar una reseña para Gatitos Nails! 🐾
-        </p>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {resenas.map((r) => (
-            <div key={r.id} className="retro-card" style={{ padding: '20px', background: '#fef08a' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '8px' }}>
-                <h4 style={{ fontWeight: '900', fontSize: '1.1rem', color: '#1e1b4b' }}>
-                  👤 {r.autor} <span style={{ fontSize: '0.85rem', color: '#be185d', fontWeight: '800' }}>({r.servicio})</span>
-                </h4>
-                <span style={{ fontSize: '1.2rem' }}>
-                  {'⭐'.repeat(r.estrellas || 5)}
-                </span>
-              </div>
-              <p style={{ fontWeight: '600', color: '#334155', lineHeight: '1.5' }}>
-                "{r.comentario}"
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Lista de Reseñas */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {resenas.map(r => (
+          <div key={r.id} className="retro-card" style={{ padding: '15px', background: '#fef08a' }}>
+            <h4 style={{ fontWeight: '900' }}>👤 {r.autor} - {'⭐'.repeat(r.estrellas || 5)}</h4>
+            <p style={{ fontWeight: '600' }}>"{r.comentario}"</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

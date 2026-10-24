@@ -3,42 +3,42 @@ import { db } from '../firebase/configuracionFirebase';
 import { collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 export default function PanelAdmin() {
-  const [vista, setVista] = useState('turnos'); // 'turnos' o 'compras'
+  const [vista, setVista] = useState('ideas'); // 'turnos', 'compras', 'ideas'
   const [turnos, setTurnos] = useState([]);
   const [compras, setCompras] = useState([]);
+  const [ideas, setIdeas] = useState([]);
 
-  // Cargar turnos en tiempo real
   useEffect(() => {
     const qTurnos = query(collection(db, 'turnos'), orderBy('creadoEn', 'desc'));
-    const desuscribirTurnos = onSnapshot(qTurnos, (snapshot) => {
-      setTurnos(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
+    const desuscribirTurnos = onSnapshot(qTurnos, (s) => setTurnos(s.docs.map(d => ({ id: d.id, ...d.data() }))));
 
     const qCompras = query(collection(db, 'compras'), orderBy('creadoEn', 'desc'));
-    const desuscribirCompras = onSnapshot(qCompras, (snapshot) => {
-      setCompras(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
+    const desuscribirCompras = onSnapshot(qCompras, (s) => setCompras(s.docs.map(d => ({ id: d.id, ...d.data() }))));
+
+    const qIdeas = query(collection(db, 'ideas_disenos'), orderBy('creadoEn', 'desc'));
+    const desuscribirIdeas = onSnapshot(qIdeas, (s) => setIdeas(s.docs.map(d => ({ id: d.id, ...d.data() }))));
 
     return () => {
       desuscribirTurnos();
       desuscribirCompras();
+      desuscribirIdeas();
     };
   }, []);
 
-  const cambiarEstado = async (coleccion, id, nuevoEstado) => {
+  const cambiarAprobacionIdea = async (id, estadoActual) => {
     try {
-      await updateDoc(doc(db, coleccion, id), { estado: nuevoEstado });
-    } catch (error) {
-      console.error("Error al actualizar estado: ", error);
+      await updateDoc(doc(db, 'ideas_disenos', id), { aprobado: !estadoActual });
+    } catch (e) {
+      console.error('Error al actualizar estado:', e);
     }
   };
 
   const eliminarRegistro = async (coleccion, id) => {
-    if (window.confirm('¿Deseas eliminar este registro?')) {
+    if (window.confirm('¿Deseas eliminar este registro de forma permanente?')) {
       try {
         await deleteDoc(doc(db, coleccion, id));
-      } catch (error) {
-        console.error("Error al eliminar: ", error);
+      } catch (e) {
+        console.error('Error al eliminar:', e);
       }
     }
   };
@@ -50,76 +50,126 @@ export default function PanelAdmin() {
           👑 PANEL DE ADMINISTRACIÓN
         </h2>
 
-        {/* Selector de Vistas */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '25px' }}>
+        {/* Botones de navegación del Admin */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '25px', flexWrap: 'wrap' }}>
           <button 
             className="retro-button" 
             style={{ background: vista === 'turnos' ? '#facc15' : '#fff' }}
             onClick={() => setVista('turnos')}
           >
-            📅 Agenda de Turnos ({turnos.length})
+            📅 Turnos ({turnos.length})
           </button>
           <button 
             className="retro-button" 
             style={{ background: vista === 'compras' ? '#facc15' : '#fff' }}
             onClick={() => setVista('compras')}
           >
-            🛒 Pedidos Tienda ({compras.length})
+            🛒 Pedidos ({compras.length})
+          </button>
+          <button 
+            className="retro-button" 
+            style={{ background: vista === 'ideas' ? '#facc15' : '#fff' }}
+            onClick={() => setVista('ideas')}
+          >
+            💡 Propuestas de Diseños ({ideas.length})
           </button>
         </div>
 
         {/* VISTA TURNOS */}
         {vista === 'turnos' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            {turnos.length === 0 ? <p style={{ textAlign: 'center', fontWeight: 'bold' }}>Sin turnos registrados.</p> : turnos.map((t) => (
-              <div key={t.id} style={{ background: '#fff', border: '3px solid #121019', borderRadius: '12px', padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-                <div>
-                  <h4 style={{ fontWeight: '900' }}>👤 {t.cliente}</h4>
-                  <p style={{ fontWeight: '600' }}>💅 Servicio: {t.servicio}</p>
-                  <p style={{ fontWeight: '600' }}>📅 Fecha: {t.fecha} - {t.hora} hs</p>
-                  <span style={{ display: 'inline-block', marginTop: '5px', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold', fontSize: '0.8rem', border: '2px solid #121019', background: t.estado === 'confirmado' ? '#86efac' : '#fef08a' }}>
-                    {t.estado ? t.estado.toUpperCase() : 'PENDIENTE'}
-                  </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {turnos.length === 0 ? (
+              <p style={{ textAlign: 'center', fontWeight: 'bold' }}>No hay turnos agendados aún.</p>
+            ) : (
+              turnos.map(t => (
+                <div key={t.id} style={{ background: '#fff', padding: '12px 18px', borderRadius: '8px', border: '2px solid #121019', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <strong>👤 {t.cliente}</strong> — 💅 {t.servicio} ({t.fecha} a las {t.hora}hs)
+                  </div>
+                  <button className="retro-button" style={{ background: '#ef4444', color: '#fff', padding: '4px 8px', fontSize: '0.8rem' }} onClick={() => eliminarRegistro('turnos', t.id)}>🗑️</button>
                 </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button className="retro-button" style={{ background: '#4ade80', padding: '5px 10px', fontSize: '0.8rem' }} onClick={() => cambiarEstado('turnos', t.id, 'confirmado')}>Confirmar</button>
-                  <button className="retro-button" style={{ background: '#ef4444', color: '#fff', padding: '5px 10px', fontSize: '0.8rem' }} onClick={() => eliminarRegistro('turnos', t.id)}>🗑️</button>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         )}
 
         {/* VISTA COMPRAS */}
         {vista === 'compras' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            {compras.length === 0 ? <p style={{ textAlign: 'center', fontWeight: 'bold' }}>Sin compras registradas.</p> : compras.map((c) => (
-              <div key={c.id} style={{ background: '#fff', border: '3px solid #121019', borderRadius: '12px', padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-                <div>
-                  <h4 style={{ fontWeight: '900' }}>🛒 Cliente: {c.usuario}</h4>
-                  <p style={{ fontWeight: '600', color: '#4338ca' }}>Total: ${c.total ? c.total.toLocaleString() : 0} ARS</p>
-                  <div style={{ fontSize: '0.85rem', marginTop: '5px' }}>
-                    <strong>Productos:</strong>
-                    <ul style={{ paddingLeft: '20px' }}>
-                      {c.productos && c.productos.map((p, idx) => (
-                        <li key={idx}>{p.nombre} x{p.cantidad} (${p.precio})</li>
-                      ))}
-                    </ul>
-                    {c.datosVoucher && (
-  <div style={{ background: '#fef08a', border: '2px solid #121019', padding: '8px 12px', borderRadius: '8px', marginTop: '8px', fontSize: '0.85rem' }}>
-    <p>🎁 <strong>Voucher para:</strong> {c.datosVoucher.paraNombre} ({c.datosVoucher.paraEmail})</p>
-    <p>🔑 <strong>Código:</strong> <code style={{ background: '#fff', padding: '2px 6px', borderRadius: '4px', border: '1px solid #121019' }}>{c.datosVoucher.codigo}</code></p>
-    {c.datosVoucher.mensaje && <p>💬 <i>"{c.datosVoucher.mensaje}"</i></p>}
-  </div>
-)}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {compras.length === 0 ? (
+              <p style={{ textAlign: 'center', fontWeight: 'bold' }}>No hay compras registradas.</p>
+            ) : (
+              compras.map(c => (
+                <div key={c.id} style={{ background: '#fff', padding: '12px 18px', borderRadius: '8px', border: '2px solid #121019', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <strong>🛒 {c.comprador}</strong> — Total: ${c.total?.toLocaleString()} ARS
                   </div>
+                  <button className="retro-button" style={{ background: '#ef4444', color: '#fff', padding: '4px 8px', fontSize: '0.8rem' }} onClick={() => eliminarRegistro('compras', c.id)}>🗑️</button>
                 </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button className="retro-button" style={{ background: '#4ade80', padding: '5px 10px', fontSize: '0.8rem' }} onClick={() => cambiarEstado('compras', c.id, 'entregado')}>Entregado</button>
-                  <button className="retro-button" style={{ background: '#ef4444', color: '#fff', padding: '5px 10px', fontSize: '0.8rem' }} onClick={() => eliminarRegistro('compras', c.id)}>🗑️</button>
+              ))
+            )}
+          </div>
+        )}
+
+        {/* VISTA APROBAR IDEAS CON PREVISUALIZACIÓN DE IMAGEN */}
+        {vista === 'ideas' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {ideas.length === 0 ? (
+              <p style={{ textAlign: 'center', fontWeight: 'bold' }}>Sin propuestas recibidas.</p>
+            ) : (
+              ideas.map((i) => (
+                <div key={i.id} style={{ background: '#fff', border: '3px solid #121019', borderRadius: '12px', padding: '20px', display: 'flex', gap: '20px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+                  
+                  {/* Vista Previa de la Imagen antes de Aceptar */}
+                  <div style={{ flex: '0 0 140px', textAlign: 'center' }}>
+                    {i.imagenUrl ? (
+                      <div style={{ background: '#f8fafc', padding: '5px', borderRadius: '8px', border: '2px solid #121019' }}>
+                        <img 
+                          src={i.imagenUrl} 
+                          alt={i.titulo} 
+                          style={{ width: '130px', height: '130px', objectFit: 'contain', borderRadius: '6px', display: 'block', margin: '0 auto' }} 
+                        />
+                        <span style={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#475569', display: 'block', marginTop: '4px' }}>Foto Adjunta</span>
+                      </div>
+                    ) : (
+                      <div style={{ width: '130px', height: '130px', borderRadius: '8px', border: '2px dashed #94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontWeight: 'bold', fontSize: '0.8rem' }}>
+                        Sin Imagen
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Datos del Diseño */}
+                  <div style={{ flex: '1 1 250px' }}>
+                    <h4 style={{ fontWeight: '900', fontSize: '1.2rem', color: '#1e1b4b', marginBottom: '5px' }}>💡 {i.titulo}</h4>
+                    <p style={{ fontWeight: '600', fontSize: '0.95rem', color: '#334155', lineHeight: '1.4' }}>{i.descripcion}</p>
+                    <p style={{ fontSize: '0.85rem', color: '#be185d', fontWeight: '800', marginTop: '6px' }}>Enviado por: {i.autora}</p>
+                    
+                    <span style={{ display: 'inline-block', marginTop: '8px', padding: '3px 10px', borderRadius: '6px', fontWeight: '900', fontSize: '0.8rem', border: '2px solid #121019', background: i.aprobado ? '#86efac' : '#fca5a5' }}>
+                      {i.aprobado ? 'PUBLICADO EN INICIO ✨' : 'PENDIENTE DE REVISIÓN ⏳'}
+                    </span>
+                  </div>
+
+                  {/* Botones de Acción */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '160px' }}>
+                    <button 
+                      className="retro-button" 
+                      style={{ background: i.aprobado ? '#fdba74' : '#4ade80', padding: '8px', fontSize: '0.85rem', width: '100%' }} 
+                      onClick={() => cambiarAprobacionIdea(i.id, i.aprobado)}
+                    >
+                      {i.aprobado ? '🙈 Ocultar' : '✨ Aprobar y Mostrar'}
+                    </button>
+                    <button 
+                      className="retro-button" 
+                      style={{ background: '#ef4444', color: '#fff', padding: '8px', fontSize: '0.85rem', width: '100%' }} 
+                      onClick={() => eliminarRegistro('ideas_disenos', i.id)}
+                    >
+                      🗑️ Eliminar
+                    </button>
+                  </div>
+
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         )}
       </div>
