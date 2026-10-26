@@ -1,79 +1,25 @@
-/* Cargamos la fuente de forma local desde tu proyecto */
-@font-face {
-  font-family: 'Caprasimo';
-  src: url('../public/fuentes/Caprasimo-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-/* Cursor por defecto en toda la página */
-body, button, a, input, select {
-  cursor: url('../public/cursores/patita_normalclick.png') 4 4, auto !important;
-}
-
-/* Cursor cuando hacés click (mousedown / active) */
-body:active, button:active, a:active {
-  cursor: url('../public/cursores/patita_click.png') 4 4, auto !important;
-}
-/* Configuración general de la aplicación */
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #25c8dd; /* Color base retro suave */
+/* --- ESTILO DE TEXTO LIMPIO PARA EL MENÚ INFERIOR --- */
+.menu-link {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 8px 14px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.App {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-/* Estilo general para las tarjetas estilo retro/maximalista */
-.retro-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.retro-card:hover {
-  transform: translate(-3px, -3px);
-  box-shadow: 8px 8px 0px #121019;
-}
-
-/* Botones con estilo retro y bordes marcados */
-.retro-button {
-  border: 3px solid #121019;
-  border-radius: 12px;
-  padding: 10px 20px;
-  font-weight: 900;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #121019;
   cursor: pointer;
-  box-shadow: 3px 3px 0px #121019;
-  transition: all 0.1s ease;
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 
-.retro-button:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0px #121019;
+.menu-link:hover {
+  background: rgba(18, 16, 25, 0.08) !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
-.retro-button:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px #121019;
-}
-
-/* Estilo de tipografía retro/groovy con borde para el nombre de la página */
-.fuente-retro-logo {
-  font-family: 'Caprasimo', serif;
-  font-weight: 400;
-  font-size: 2.5rem; /* Un poco más grande para destacar el estilo */
-  color: #fff; /* Color de letra blanco para contrastar con el fondo rosa */
-  letter-spacing: 3px;/*espacio entre letras
-  
-  /* Efecto de borde negro grueso y sombra rígida retro */
-  text-shadow: 
-    -3px -2px 0 #121019,  
-     3px -2px 0 #121019,
-    -3px  2px 0 #121019,
-     3px  2px 0 #121019,
-     5px  3px 0 #121019; 
+.menu-link:active {
+  transform: none !important;
+  box-shadow: none !important;
 }
