@@ -12,6 +12,8 @@ import SeccionArmaTuServicio from './components/SeccionArmaTuServicio';
 import SeccionResenas from './components/SeccionResenas';
 import DecoracionGatitos from './components/DecoracionGatitos';
 
+import bannerSplash from './assets/bannerdespazable.jpeg';
+
 import { auth, db } from './firebase/configuracionFirebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
@@ -23,6 +25,26 @@ function App() {
   const [mostrarModalCarrito, setMostrarModalCarrito] = useState(false);
   const [usuarioActivo, setUsuarioActivo] = useState(null);
   const [datosUsuario, setDatosUsuario] = useState({ esClientaFiel: false, mesesSeguidos: 0 });
+
+  // Estats per gestionar el SplashScreen
+  const [mostrarSplash, setMostrarSplash] = useState(true);
+  const [fadingSplash, setFadingSplash] = useState(false);
+
+  // Efecte per amagar el splash screen passats uns segons
+  useEffect(() => {
+    const timerFade = setTimeout(() => {
+      setFadingSplash(true); // Comença la transició de desvaniment
+    }, 2500); // 2.5 segons visible
+
+    const timerRemove = setTimeout(() => {
+      setMostrarSplash(false); // S'elimina completament del DOM
+    }, 3000); // 3 segons en total (inclou 0.5s de transició)
+
+    return () => {
+      clearTimeout(timerFade);
+      clearTimeout(timerRemove);
+    };
+  }, []);
 
   // Escuchar estado de autenticación en Firebase
   useEffect(() => {
@@ -50,6 +72,14 @@ function App() {
 
   return (
     <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      
+      {/* Pantalla de bienvenida (Splash Screen) */}
+      {mostrarSplash && (
+        <div className={`splash-overlay ${fadingSplash ? 'fade-out' : ''}`}>
+          <img src={bannerSplash} alt="Magic Bling Splash" className="splash-image" />
+        </div>
+      )}
+
       <DecoracionGatitos />
 
       {/* Barra superior de navegación */}
