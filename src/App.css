@@ -1,4 +1,6 @@
-/* Cargamos la fuente de forma local desde tu proyecto */
+/* =======================================================
+   FUENTES Y CURSORES
+======================================================= */
 @font-face {
   font-family: 'Caprasimo';
   src: url('../public/fuentes/Caprasimo-Regular.ttf') format('truetype');
@@ -6,6 +8,9 @@
   font-style: normal;
   font-display: swap;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Shrikhand&family=Fredoka:wght@500;600;700&display=swap');
+
 /* Cursor por defecto en toda la página */
 body, button, a, input, select {
   cursor: url('../public/cursores/patita_normalclick.png') 4 4, auto !important;
@@ -15,11 +20,14 @@ body, button, a, input, select {
 body:active, button:active, a:active {
   cursor: url('../public/cursores/patita_click.png') 4 4, auto !important;
 }
-/* Configuración general de la aplicación */
+
+/* =======================================================
+   CONFIGURACIÓN GENERAL
+======================================================= */
 body {
   margin: 0;
   padding: 0;
-  background-color: #25c8dd; /* Color base retro suave */
+  background-color: #25c8dd;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -30,7 +38,9 @@ body {
   position: relative;
 }
 
-/* Estilo general para las tarjetas estilo retro/maximalista */
+/* =======================================================
+   ESTILOS GENERALES (TARJETAS, BOTONES, LOGO)
+======================================================= */
 .retro-card {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -40,7 +50,6 @@ body {
   box-shadow: 8px 8px 0px #121019;
 }
 
-/* Botones con estilo retro y bordes marcados */
 .retro-button {
   border: 3px solid #121019;
   border-radius: 12px;
@@ -61,15 +70,12 @@ body {
   box-shadow: 1px 1px 0px #121019;
 }
 
-/* Estilo de tipografía retro/groovy con borde para el nombre de la página */
 .fuente-retro-logo {
   font-family: 'Caprasimo', serif;
   font-weight: 400;
-  font-size: 2.5rem; /* Un poco más grande para destacar el estilo */
-  color: #fff; /* Color de letra blanco para contrastar con el fondo rosa */
-  letter-spacing: 3px;/*espacio entre letras
-  
-  /* Efecto de borde negro grueso y sombra rígida retro */
+  font-size: 2.5rem;
+  color: #fff;
+  letter-spacing: 3px;
   text-shadow: 
     -3px -2px 0 #121019,  
      3px -2px 0 #121019,
@@ -77,7 +83,7 @@ body {
      3px  2px 0 #121019,
      5px  3px 0 #121019; 
 }
-/* --- ESTILO DE TEXTO LIMPIO PARA EL MENÚ INFERIOR --- */
+
 .menu-link {
   background: transparent !important;
   border: none !important;
@@ -92,16 +98,15 @@ body {
   transition: all 0.2s ease;
 }
 
-.menu-link:hover {
+.menu-link:hover, .menu-link:active {
   background: rgba(18, 16, 25, 0.08) !important;
   transform: none !important;
   box-shadow: none !important;
 }
 
-.menu-link:active {
-  transform: none !important;
-  box-shadow: none !important;
-}/* Estilos para el Splash Screen con salida hacia arriba más lenta */
+/* =======================================================
+   SPLASH SCREEN
+======================================================= */
 .splash-overlay {
   position: fixed;
   top: 0;
@@ -113,14 +118,13 @@ body {
   justify-content: center;
   align-items: center;
   z-index: 99999;
-  /* Cambiamos 0.6s por 1.2s para que sea el doble de lento y suave */
   transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1), opacity 1.2s ease;
   transform: translateY(0);
 }
 
 .splash-overlay.fade-out {
   transform: translateY(-100%);
-  opacity: 0.5; /* Se va desvaneciendo mientras sube con calma */
+  opacity: 0.5;
   pointer-events: none;
 }
 
@@ -129,8 +133,10 @@ body {
   height: 100vh;
   object-fit: cover;
 }
-@import url('https://fonts.googleapis.com/css2?family=Shrikhand&family=Fredoka:wght@500;600;700&display=swap');
 
+/* =======================================================
+   SECCIÓN DE AUTENTICACIÓN / LOGIN (FONDO AJUSTADO)
+======================================================= */
 .auth-section-wrapper {
   --orange-bright: #FF6B00;
   --orange-light: #FF9E00;
@@ -149,122 +155,46 @@ body {
   --shadow-hard-lg: 8px 8px 0px #181124;
 
   min-height: 100vh;
-  font-family: 'Fredoka', cursive, sans-serif;
-  background-color: var(--cream-bg);
-  color: var(--dark-ink);
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem 1rem;
-  position: relative;
-  overflow: hidden;
-  width: 100%;
+
+  font-family: 'Fredoka', cursive, sans-serif;
+  color: var(--dark-ink);
+
+  /* FONDO REPETIDO A TAMAÑO IDEAL (MODIFÍCALO SI LO QUIERES MÁS CHICO/GRANDE) */
+  background-image: url('../public/fondos/login-bg.jpeg') !important;
+  background-repeat: repeat !important;
+  background-size: 420px !important; 
+  background-position: center !important;
 }
 
-/* Fondo Mosaico */
-.bg-collage {
+/* Capa suave para destacar el login */
+.auth-section-wrapper::before {
+  content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  opacity: 0.85;
-  pointer-events: none;
-}
-
-.tile {
-  width: 100%;
-  height: 100%;
-}
-
-.tile-waves {
-  background: repeating-linear-gradient(
-    -45deg,
-    var(--pink-hot),
-    var(--pink-hot) 20px,
-    var(--orange-bright) 20px,
-    var(--orange-bright) 40px,
-    var(--yellow-sun) 40px,
-    var(--yellow-sun) 60px
-  );
-}
-
-.tile-checkers {
-  background-color: var(--green-light);
-  background-image: 
-    linear-gradient(45deg, var(--green-groovy) 25%, transparent 25%),
-    linear-gradient(-45deg, var(--green-groovy) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, var(--green-groovy) 75%),
-    linear-gradient(-45deg, transparent 75%, var(--green-groovy) 75%);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
-}
-
-.tile-sunburst {
-  background: conic-gradient(
-    from 0deg,
-    var(--yellow-sun) 0deg 22.5deg,
-    var(--orange-bright) 22.5deg 45deg,
-    var(--pink-hot) 45deg 67.5deg,
-    var(--blue-sky) 67.5deg 90deg,
-    var(--yellow-sun) 90deg 112.5deg,
-    var(--orange-bright) 112.5deg 135deg,
-    var(--pink-hot) 135deg 157.5deg,
-    var(--blue-sky) 157.5deg 180deg
-  );
-}
-
-.tile-stripes {
-  background: repeating-linear-gradient(
-    0deg,
-    var(--pink-hot),
-    var(--pink-hot) 25px,
-    var(--purple-wavy) 25px,
-    var(--purple-wavy) 50px
-  );
-}
-
-.tile-dots {
-  background-color: var(--orange-light);
-  background-image: radial-gradient(var(--pink-hot) 20%, transparent 20%);
-  background-size: 30px 30px;
-}
-
-.tile-blue-wavy {
-  background: repeating-radial-gradient(
-    circle at 0 0,
-    var(--blue-electric),
-    var(--blue-electric) 20px,
-    var(--yellow-sun) 20px,
-    var(--yellow-sun) 40px
-  );
-}
-
-/* Stickers Flotantes */
-.retro-sticker {
-  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(1px);
   z-index: 1;
-  filter: drop-shadow(4px 4px 0px var(--dark-ink));
 }
 
-.flower-1 { top: 8%; left: 6%; width: 70px; }
-.smiley-1 { bottom: 12%; left: 8%; width: 80px; transform: rotate(-12deg); }
-.sun-1 { top: 10%; right: 8%; width: 90px; }
-
-/* Login Container & Card */
 .login-container {
   position: relative;
-  z-index: 5;
+  z-index: 10;
   width: 100%;
   max-width: 420px;
+  margin-top: 45px;
 }
 
 .login-card {
-  background: var(--cream-bg);
+  background: rgba(255, 245, 228, 0.96) !important;
+  backdrop-filter: blur(8px);
   border: 4px solid var(--dark-ink);
   border-radius: 28px;
   padding: 2.5rem 2rem;
@@ -272,26 +202,34 @@ body {
   position: relative;
   background-image: 
     radial-gradient(var(--purple-light) 15%, transparent 16%),
-    radial-gradient(var(--green-light) 15%, transparent 16%);
+    radial-gradient(var(--green-light) 15%, transparent 16%) !important;
   background-size: 60px 60px;
   background-position: 0 0, 30px 30px;
 }
 
 .card-badge {
   position: absolute;
-  top: -18px;
-  right: 25px;
+  top: -16px;
+  right: 20px;
   background: var(--yellow-sun);
   border: 3px solid var(--dark-ink);
-  padding: 4px 14px;
+  padding: 4px 12px;
   border-radius: 20px;
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   box-shadow: 3px 3px 0px var(--dark-ink);
-  transform: rotate(5deg);
+  transform: rotate(4deg);
   text-transform: uppercase;
+  z-index: 5;
 }
 
+.bg-collage {
+  display: none !important;
+}
+
+/* =======================================================
+   ELEMENTOS DEL FORMULARIO Y COMPONENTES
+======================================================= */
 .login-title {
   font-family: 'Shrikhand', cursive;
   font-size: 3rem;
@@ -478,4 +416,78 @@ body {
 
 .toast-retro.show {
   bottom: 30px;
+}
+
+/* =======================================================
+   ANIMACIONES Y MASCOTAS (GATITOS Y STICKERS)
+======================================================= */
+.retro-sticker {
+  position: absolute;
+  z-index: 2;
+  filter: drop-shadow(4px 4px 0px var(--dark-ink));
+}
+
+.flower-1 { top: 8%; left: 6%; width: 70px; }
+.smiley-1 { bottom: 12%; left: 8%; width: 80px; transform: rotate(-12deg); }
+.sun-1 { top: 10%; right: 8%; width: 90px; }
+
+.cat-playing-container {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 100px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.animated-cat {
+  position: absolute;
+  left: 20px;
+  top: 0;
+  animation: catHunt 4s ease-in-out infinite alternate;
+  filter: drop-shadow(4px 4px 0px #181124);
+}
+
+.yarn-ball {
+  position: absolute;
+  right: 20px;
+  top: 35px;
+  animation: yarnRoll 4s ease-in-out infinite alternate;
+  filter: drop-shadow(3px 3px 0px #181124);
+}
+
+.cat-peeking-container {
+  position: absolute;
+  top: -130px;
+  left: 1px;
+  width: 250px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.cat-peeking-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0px 3px 0px #181124);
+  animation: catPeekBounce 3s ease-in-out infinite alternate;
+}
+
+@keyframes catHunt {
+  0% { transform: translateX(0px) translateY(0px) scaleX(1); }
+  50% { transform: translateX(90px) translateY(-8px) scaleX(1.05) rotate(3deg); }
+  100% { transform: translateX(140px) translateY(0px) scaleX(1) rotate(-2deg); }
+}
+
+@keyframes yarnRoll {
+  0% { transform: translateX(0px) rotate(0deg); }
+  50% { transform: translateX(-50px) rotate(-180deg); }
+  100% { transform: translateX(-100px) rotate(-360deg); }
+}
+
+@keyframes catPeekBounce {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-3px); }
 }
