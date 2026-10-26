@@ -1,15 +1,14 @@
-
 import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase/configuracionFirebase';
 import { signOut } from 'firebase/auth';
 import fondoBanner from '../assets/banner-2.jpeg';
 import imagenGatito from '../assets/quiron-mirando.png';
+
 export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, puntos, contadorCarrito, onAbrirCarrito, usuarioActivo }) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      // Si bajamos más de 30 píxeles, activamos el estado de "scrolled"
       if (window.scrollY > 30) {
         setScrolled(true);
       } else {
@@ -20,6 +19,7 @@ export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, punto
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
   const cerrarSesion = async () => {
     try {
       await signOut(auth);
@@ -31,13 +31,12 @@ export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, punto
 
   return (
     <>
-      {/* Forzamos la carga de la fuente directamente desde el componente */}
       <style>
         {`@import url('https://googleapis.com');`}
       </style>
 
       <header style={{ 
-       backgroundImage: `url(${fondoBanner})`,
+        backgroundImage: `url(${fondoBanner})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -47,14 +46,28 @@ export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, punto
         top: 0, 
         zIndex: 1000 
       }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
+        <div style={{ 
+          maxWidth: '1200px', 
+          margin: '0 auto', 
+          display: 'flex', 
+          flexDirection: 'column', // Cambiado a columna para apilar el logo arriba centrado y los botones abajo (o puedes mantener 'row')
+          alignItems: 'center', 
+          gap: '15px' 
+        }}>
           
-          {/* Logo / Nombre del salón con la tipografía retro */}
+          {/* Logo / Nombre del salón centrado */}
           <div 
-            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}
+            style={{ 
+              cursor: 'pointer', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              gap: '10px',
+              textAlign: 'center'
+            }}
             onClick={() => setPestanaActiva('inicio')}
           >
-            <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <span style={{ fontSize: '2rem' }}>🐾</span>
               <h1 className="fuente-retro-logo" style={{ margin: 0 }}>
                 MAGIC BLING
@@ -62,8 +75,8 @@ export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, punto
             </div>
           </div>
 
-          {/* Resto de los botones de navegación... */}
-          <nav style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+          {/* Botones de navegación centrados */}
+          <nav style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
             <button 
               className="retro-button" 
               style={{ background: pestanaActiva === 'inicio' ? '#facc15' : '#fff' }} 
@@ -147,20 +160,20 @@ export default function BarraNavegacion({ pestanaActiva, setPestanaActiva, punto
               </button>
             )}
           </nav>
-        </div>{/* --- 3. GATITO ASOMÁNDOSE DESDE EL BORDE --- */}
+        </div>
+
+        {/* Gatito asomándose */}
         <img 
           src={imagenGatito} 
           alt="Gatito asomándose" 
           style={{
             position: 'fixed',
             bottom: '-15px',
-            // Al hacer scroll se desplaza a -420px (fuera de la pantalla por la izquierda)
             left: scrolled ? '-420px' : '-61px',
             width: '400px',
             height: 'auto',
             zIndex: 9999,
             pointerEvents: 'none',
-            // Transición animada para la propiedad 'left'
             transition: 'left 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         />
