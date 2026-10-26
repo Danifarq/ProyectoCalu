@@ -25,20 +25,21 @@ function App() {
   const [mostrarModalCarrito, setMostrarModalCarrito] = useState(false);
   const [usuarioActivo, setUsuarioActivo] = useState(null);
   const [datosUsuario, setDatosUsuario] = useState({ esClientaFiel: false, mesesSeguidos: 0 });
+  const [cargandoAuth, setCargandoAuth] = useState(true);
 
-  // Estats per gestionar el SplashScreen
+  // Estados para gestionar el SplashScreen
   const [mostrarSplash, setMostrarSplash] = useState(true);
   const [fadingSplash, setFadingSplash] = useState(false);
 
-  // Efecte per amagar el splash screen passats uns segons
+  // Efecto para ocultar el splash screen
   useEffect(() => {
     const timerFade = setTimeout(() => {
-      setFadingSplash(true); // Comença la transició de desvaniment
-    }, 2500); // 2.5 segons visible
+      setFadingSplash(true);
+    }, 2500);
 
     const timerRemove = setTimeout(() => {
-      setMostrarSplash(false); // S'elimina completament del DOM
-    }, 3000); // 3 segons en total (inclou 0.5s de transició)
+      setMostrarSplash(false);
+    }, 3000);
 
     return () => {
       clearTimeout(timerFade);
@@ -65,11 +66,30 @@ function App() {
         setUsuarioActivo(null);
         setDatosUsuario({ esClientaFiel: false, mesesSeguidos: 0 });
       }
+      setCargandoAuth(false);
     });
 
     return () => desuscribir();
   }, []);
 
+  // 1. PANTALLA DE AUTENTICACIÓN OBLIGATORIA (Si no está logueado)
+  if (!usuarioActivo && !cargandoAuth) {
+    return (
+      <div className="App" style={{ minHeight: '100vh', position: 'relative' }}>
+        {/* Splash Screen si aún está activo */}
+        {mostrarSplash && (
+          <div className={`splash-overlay ${fadingSplash ? 'fade-out' : ''}`}>
+            <img src={bannerSplash} alt="Magic Bling Splash" className="splash-image" />
+          </div>
+        )}
+
+        {/* Muestra únicamente la sección de autenticación */}
+        <SeccionAutenticacion usuarioActivo={usuarioActivo} />
+      </div>
+    );
+  }
+
+  // 2. APLICACIÓN COMPLETA (Solo accesible con sesión iniciada)
   return (
     <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
       
