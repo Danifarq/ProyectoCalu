@@ -167,11 +167,6 @@ body {
   font-family: 'Fredoka', cursive, sans-serif;
   color: var(--dark-ink);
 
-  /* FONDO REPETIDO A TAMAÑO IDEAL (MODIFÍCALO SI LO QUIERES MÁS CHICO/GRANDE) */
-  background-image: url('../public/fondos/login-bg.jpeg') !important;
-  background-repeat: repeat !important;
-  background-size: 420px !important; 
-  background-position: center !important;
 }
 
 /* Capa suave para destacar el login */
@@ -193,18 +188,8 @@ body {
 }
 
 .login-card {
-  background: rgba(255, 245, 228, 0.96) !important;
-  backdrop-filter: blur(8px);
-  border: 4px solid var(--dark-ink);
-  border-radius: 28px;
   padding: 2.5rem 2rem;
-  box-shadow: var(--shadow-hard-lg);
   position: relative;
-  background-image: 
-    radial-gradient(var(--purple-light) 15%, transparent 16%),
-    radial-gradient(var(--green-light) 15%, transparent 16%) !important;
-  background-size: 60px 60px;
-  background-position: 0 0, 30px 30px;
 }
 
 .card-badge {
@@ -416,78 +401,4 @@ body {
 
 .toast-retro.show {
   bottom: 30px;
-}
-
-/* =======================================================
-   ANIMACIONES Y MASCOTAS (GATITOS Y STICKERS)
-======================================================= */
-.retro-sticker {
-  position: absolute;
-  z-index: 2;
-  filter: drop-shadow(4px 4px 0px var(--dark-ink));
-}
-
-.flower-1 { top: 8%; left: 6%; width: 70px; }
-.smiley-1 { bottom: 12%; left: 8%; width: 80px; transform: rotate(-12deg); }
-.sun-1 { top: 10%; right: 8%; width: 90px; }
-
-.cat-playing-container {
-  position: absolute;
-  top: 15%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 320px;
-  height: 100px;
-  z-index: 20;
-  pointer-events: none;
-}
-
-.animated-cat {
-  position: absolute;
-  left: 20px;
-  top: 0;
-  animation: catHunt 4s ease-in-out infinite alternate;
-  filter: drop-shadow(4px 4px 0px #181124);
-}
-
-.yarn-ball {
-  position: absolute;
-  right: 20px;
-  top: 35px;
-  animation: yarnRoll 4s ease-in-out infinite alternate;
-  filter: drop-shadow(3px 3px 0px #181124);
-}
-
-.cat-peeking-container {
-  position: absolute;
-  top: -130px;
-  left: 1px;
-  width: 250px;
-  z-index: 20;
-  pointer-events: none;
-}
-
-.cat-peeking-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  filter: drop-shadow(0px 3px 0px #181124);
-  animation: catPeekBounce 3s ease-in-out infinite alternate;
-}
-
-@keyframes catHunt {
-  0% { transform: translateX(0px) translateY(0px) scaleX(1); }
-  50% { transform: translateX(90px) translateY(-8px) scaleX(1.05) rotate(3deg); }
-  100% { transform: translateX(140px) translateY(0px) scaleX(1) rotate(-2deg); }
-}
-
-@keyframes yarnRoll {
-  0% { transform: translateX(0px) rotate(0deg); }
-  50% { transform: translateX(-50px) rotate(-180deg); }
-  100% { transform: translateX(-100px) rotate(-360deg); }
-}
-
-@keyframes catPeekBounce {
-  0% { transform: translateY(0px); }
-  100% { transform: translateY(-3px); }
 }

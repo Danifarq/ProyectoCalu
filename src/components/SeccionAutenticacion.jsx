@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { auth } from '../firebase/configuracionFirebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
-// Importamos la nueva imagen del gatito saludando/agarrando el borde
-import runaSaludandoImg from '../assets/runa-saludando.png';
 
 export default function SeccionAutenticacion() {
   const [email, setEmail] = useState('');
@@ -69,14 +67,11 @@ export default function SeccionAutenticacion() {
      {/* Card del Login / Registro */}
       <main className="login-container">
         <div className="login-card">
-          {/* Gatito saludando y agarrando el borde superior */}
-          <div className="cat-peeking-container">
-            <img src={runaSaludandoImg} alt="Gatito saludando" className="cat-peeking-img" />
-          </div>
+         
 
-          <div className="card-badge">★ {esRegistro ? 'Regístrate' : 'Welcome'} ★</div>
+          <div className="card-badge">★ {esRegistro ? 'Regístrate' : 'Bienvenida'} ★</div>
 
-          <h1 className="login-title">{esRegistro ? 'REGISTRO' : 'LOGIN'}</h1>
+          <h1 className="login-title">{esRegistro ? 'REGISTRO' : 'INICIA SESIóN'}</h1>
           
           
           <form onSubmit={handleSubmit}>
