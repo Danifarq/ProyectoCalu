@@ -1,0 +1,218 @@
+/* --- ENCABEZADO Y BARRA SUPERIOR --- */
+.header-container {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+}/* --- BARRA SUPERIOR PERFECTAMENTE CENTRADA --- */
+.top-bar {
+  background-color: #750533;
+  color: #ffffff;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* Centra el elemento del medio exactamente en el eje central */
+  align-items: center;
+  padding: 8px 24px;
+  font-size: 14px;
+}
+
+.top-bar-socials {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+.top-bar-socials a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 16px;
+  transition: opacity 0.2s;
+}
+
+.top-bar-socials a:hover {
+  opacity: 0.8;
+}
+
+.top-bar-announcement {
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* --- NAV PRINCIPAL (LOGO Y ENLACES) --- */
+/* --- NAV PRINCIPAL CENTRADO Y RESPONSIVO --- */
+.main-navbar {
+  background-color: #fff0f5; /* Fondo rosa pastel claro */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* Columna izquierda, Logo al centro, Columna derecha */
+  align-items: center;
+  padding: 12px 24px;
+  border-bottom: 2px solid #f8c0d8;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.nav-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Alineaciones para cada lado */
+.nav-section.left {
+  justify-content: flex-start;
+}
+
+.nav-section.right {
+  justify-content: flex-end;
+}
+
+/* Estilos de botones */
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: #ed035b;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.nav-btn:hover {
+  background-color: rgba(237, 3, 91, 0.1);
+}
+
+.nav-btn.active {
+  background-color: #ed035b;
+  color: #ffffff;
+}
+
+/* Logo Central */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0 15px;
+}
+
+.logo-img {
+  height: 55px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.logo-img:hover {
+  transform: scale(1.05);
+}
+
+/* Botón de Cuenta / Your Space destacada */
+.btn-your-space {
+  border: 2px solid #ed035b;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-style: italic;
+  font-weight: bold;
+  text-transform: none;
+  background: transparent;
+  color: #ed035b;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.btn-your-space:hover,
+.btn-your-space.active {
+  background-color: #ed035b;
+  color: #ffffff;
+}
+
+/* Carrito */
+.cart-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  position: relative;
+  padding: 4px;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background-color: #ed035b;
+  color: #ffffff;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+/* Botón de Salir */
+.btn-logout {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #b91c1c;
+}
+
+.btn-logout:hover {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+/* Imagen del gatito flotante */
+.gatito-asomado {
+  position: fixed;
+  bottom: -15px;
+  width: 400px;
+  height: auto;
+  z-index: 9999;
+  pointer-events: none;
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.logo-img {
+  height: 55px; /* Ajusta este valor si deseas que el logo sea más grande o más pequeño */
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.logo-img:hover {
+  transform: scale(1.05);
+}
+.top-bar-socials {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+.social-icon {
+  height: 18px;
+  width: auto;
+  object-fit: contain;
+  vertical-align: middle;
+  
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.top-bar-socials a:hover .social-icon {
+  opacity: 0.8;
+  transform: scale(1.1);
+}

@@ -1,5 +1,5 @@
 /* =======================================================
-   FUENTES Y CURSORES
+   1. FUENTES Y CURSORES
 ======================================================= */
 @font-face {
   font-family: 'Caprasimo';
@@ -11,23 +11,27 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Shrikhand&family=Fredoka:wght@500;600;700&display=swap');
 
-/* Cursor por defecto en toda la página */
+/* Cursores personalizados */
 body, button, a, input, select {
   cursor: url('../public/cursores/patita_normalclick.png') 4 4, auto !important;
 }
 
-/* Cursor cuando hacés click (mousedown / active) */
 body:active, button:active, a:active {
   cursor: url('../public/cursores/patita_click.png') 4 4, auto !important;
 }
-
 /* =======================================================
-   CONFIGURACIÓN GENERAL
+   2. CONFIGURACIÓN GENERAL Y RESET DE BORDES
 ======================================================= */
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #25c8dd;
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #fac0e0 !important; 
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -36,10 +40,20 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  flex: 1;
 }
 
 /* =======================================================
-   ESTILOS GENERALES (TARJETAS, BOTONES, LOGO)
+   3. ESTILOS DE COMPONENTES Y BOTONES RETRO
 ======================================================= */
 .retro-card {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -70,19 +84,7 @@ body {
   box-shadow: 1px 1px 0px #121019;
 }
 
-.fuente-retro-logo {
-  font-family: 'Caprasimo', serif;
-  font-weight: 400;
-  font-size: 2.5rem;
-  color: #fff;
-  letter-spacing: 3px;
-  text-shadow: 
-    -3px -2px 0 #121019,  
-     3px -2px 0 #121019,
-    -3px  2px 0 #121019,
-     3px  2px 0 #121019,
-     5px  3px 0 #121019; 
-}
+
 
 .menu-link {
   background: transparent !important;
@@ -98,14 +100,15 @@ body {
   transition: all 0.2s ease;
 }
 
-.menu-link:hover, .menu-link:active {
+.menu-link:hover, 
+.menu-link:active {
   background: rgba(18, 16, 25, 0.08) !important;
   transform: none !important;
   box-shadow: none !important;
 }
 
 /* =======================================================
-   SPLASH SCREEN
+   4. SPLASH SCREEN
 ======================================================= */
 .splash-overlay {
   position: fixed;
@@ -135,7 +138,7 @@ body {
 }
 
 /* =======================================================
-   SECCIÓN DE AUTENTICACIÓN / LOGIN (FONDO AJUSTADO)
+   5. SECCIÓN DE AUTENTICACIÓN / LOGIN
 ======================================================= */
 .auth-section-wrapper {
   --orange-bright: #FF6B00;
@@ -158,23 +161,19 @@ body {
   width: 100%;
   position: relative;
   overflow: hidden;
-
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem 1rem;
-
   font-family: 'Fredoka', cursive, sans-serif;
   color: var(--dark-ink);
-
 }
 
-/* Capa suave para destacar el login */
 .auth-section-wrapper::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(1px);
   z-index: 1;
 }
@@ -212,9 +211,7 @@ body {
   display: none !important;
 }
 
-/* =======================================================
-   ELEMENTOS DEL FORMULARIO Y COMPONENTES
-======================================================= */
+/* Formulario */
 .login-title {
   font-family: 'Shrikhand', cursive;
   font-size: 3rem;
@@ -383,6 +380,7 @@ body {
   text-decoration: underline;
 }
 
+/* Toast Notificaciones */
 .toast-retro {
   position: fixed;
   bottom: -100px;
@@ -401,4 +399,49 @@ body {
 
 .toast-retro.show {
   bottom: 30px;
+}
+/* --- BARRA MARGEN VERDE DE ABAJO --- */
+.ticker-bar {
+  background-color: #68823b; /* Fondo verde principal */
+  border-top: 3px solid #a49b32; /* Borde superior doble tono */
+  border-bottom: 3px solid #a49b32; /* Borde inferior */
+  padding: 8px 0;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.ticker-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  animation: marquee 20s linear infinite;
+}
+
+.ticker-item {
+  color: #a49b32; /* Color del texto verde oliva / dorado */
+  font-family: 'Playfair Display', 'Georgia', cursive, serif;
+  font-style: italic;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.ticker-separator {
+  color: #a49b32;
+  font-size: 0.9rem;
+}
+
+/* Animación de desplazamiento continuo */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
